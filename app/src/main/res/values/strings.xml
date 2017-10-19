@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Lomux-pro</string>
+    <string name="title_activity_lomux_map">Map</string>
+    <string name="image_path">https://test-db-lomux.000webhostapp.com/thumbnail/</string>
+</resources>
