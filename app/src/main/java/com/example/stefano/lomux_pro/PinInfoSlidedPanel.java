@@ -7,6 +7,8 @@ import android.os.AsyncTask;
 import android.support.annotation.UiThread;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.ContextCompat;
+import android.text.SpannableString;
+import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.View;
 import android.widget.GridLayout;
@@ -189,14 +191,27 @@ public class PinInfoSlidedPanel {
         private void complete_info(Pin ret, List<SongHasMediatype> mediatypeList){
             artists_textview.setText(ret.getSongidSong().getArtistidArtist().getName());
             info.setText(ret.getInfo());
-            formore.setText(ret.getSourceidSource().getSourceName());
+
+            SpannableString formore_text = new SpannableString(ret.getSourceidSource().getSourceName());
+            formore_text.setSpan(new UnderlineSpan(), 0, ret.getSourceidSource().getSourceName().length(), 0);
+
+            formore.setText(formore_text);
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0);
             lp.weight=0.1f;
             source_layout.setLayoutParams(lp);
             Link sourceLink = new Link(ret.getSourceidSource().getSourceName(), ret.getSourceLink());
 
-            if (sourceLink != null&&!sourceLink.equals("-"))
+            if (sourceLink != null&&!sourceLink.getText().equals("-")) {
                 formore.setOnClickListener(new URIClickListener(sourceLink.getUri()));
+                lp.weight=0.1f;
+                source_layout.setLayoutParams(lp);
+
+            }
+            else {
+                lp.weight=0.0f;
+                source_layout.setLayoutParams(lp);
+
+            }
           /*  if (ret.getImage()>0)
                 Picasso.with(view).load(ret.getImageUrl(view)).into(pin_fragment_image);*/
 

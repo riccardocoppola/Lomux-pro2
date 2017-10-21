@@ -8,8 +8,10 @@ import com.example.stefano.lomux_pro.LomuxMapActivity;
 import com.example.stefano.lomux_pro.PinInfoSlidedPanel;
 import com.example.stefano.lomux_pro.PinRenderer;
 import com.example.stefano.lomux_pro.model.Pin;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterItem;
@@ -17,33 +19,38 @@ import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.ClusterRenderer;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
+import java.util.Map;
 import java.util.concurrent.Executors;
 
 /**
  * Created by Stefano on 18/10/2017.
  */
 
-public class ClusterMangerListener implements GoogleMap.OnMarkerClickListener {
+public class ClusterMangerListener implements GoogleMap.OnMarkerClickListener, ClusterManager.OnClusterClickListener<Pin> {
 
     ClusterManager clusterManager;
     PinRenderer pinRenderer;
     SlidingUpPanelLayout slidingUpPanelLayout;
     LomuxMapActivity view;
+    GoogleMap map;
 
-    public ClusterMangerListener(ClusterManager<Pin> clusterManager, PinRenderer pinRenderer, SlidingUpPanelLayout slidingUpPanelLayout, LomuxMapActivity view) {
+    public ClusterMangerListener(ClusterManager<Pin> clusterManager, PinRenderer pinRenderer, SlidingUpPanelLayout slidingUpPanelLayout, LomuxMapActivity view, GoogleMap map) {
         this.clusterManager = clusterManager;
         this.pinRenderer = pinRenderer;
         this.slidingUpPanelLayout = slidingUpPanelLayout;
         this.view = view;
+        this.map = map;
     }
 
     @Override
     public boolean onMarkerClick(Marker marker) {
         Pin pin = pinRenderer.getClusterItem(marker);
-        if(pin!=null)
-            return onClusterItemClick(marker,pin);
+        if(pin!=null) {
+            return onClusterItemClick(marker, pin);
+        }
         slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
         return clusterManager.onMarkerClick(marker);
+        //return true;
     }
 
 
@@ -70,7 +77,26 @@ public class ClusterMangerListener implements GoogleMap.OnMarkerClickListener {
             }
         });
         slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
-        return clusterManager.onMarkerClick(marker);
+        //return clusterManager.onMarkerClick(marker);
+        return true;
+    }
 
+    @Override
+    public boolean onClusterClick(Cluster<Pin> cluster) {
+//        map.animateCamera(CameraUpdateFactory.newLatLngZoom(
+//                cluster.getPosition(), (float) Math.floor(map
+//                        .getCameraPosition().zoom + 1)), 300,
+//                null);
+
+        LatLngBounds.Builder builder = LatLngBounds.builder();
+        for (ClusterItem item : cluster.getItems()) {
+            builder.include(item.getPosition());
+        }
+        final LatLngBounds bounds = builder.build();
+        map.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 100));
+
+
+        Log.wtf("cluster", "cluster clicked");
+        return true;
     }
 }

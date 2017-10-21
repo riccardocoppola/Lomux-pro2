@@ -2,9 +2,6 @@ package com.example.stefano.lomux_pro;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
@@ -17,9 +14,6 @@ import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.animation.AlphaAnimation;
 import android.view.inputmethod.InputMethodManager;
-import android.webkit.WebHistoryItem;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.SearchView;
 
 import com.example.stefano.lomux_pro.callbacks.PinsCallback;
@@ -27,23 +21,16 @@ import com.example.stefano.lomux_pro.fragment.YoutubeFragment;
 import com.example.stefano.lomux_pro.listener.ClusterMangerListener;
 import com.example.stefano.lomux_pro.listener.DrawnerItemClickListener;
 import com.example.stefano.lomux_pro.listener.MapChangesListener;
-import com.example.stefano.lomux_pro.listener.YoutubeListener;
 import com.example.stefano.lomux_pro.model.Pin;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.internal.zzp;
-import com.google.maps.android.clustering.Cluster;
-import com.google.maps.android.clustering.ClusterItem;
 import com.google.maps.android.clustering.ClusterManager;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class LomuxMapActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMapLoadedCallback, GoogleMap.OnMapClickListener,YoutubeFragment.OnYoutubeBackListener {
@@ -64,6 +51,8 @@ public class LomuxMapActivity extends FragmentActivity implements OnMapReadyCall
         setContentView(R.layout.activity_lomux_map);
         // create our manager instance after the content view is set
 
+
+        Log.wtf("Oncreate", "created");
         //super.getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(new DrawnerItemClickListener(this));
@@ -122,7 +111,13 @@ public class LomuxMapActivity extends FragmentActivity implements OnMapReadyCall
         mClusterManager.setAnimation(true);
         pinRenderer = new PinRenderer(this.getApplicationContext(), mMap, mClusterManager);
         mClusterManager.setRenderer(pinRenderer);
-        mMap.setOnMarkerClickListener(new ClusterMangerListener(mClusterManager,pinRenderer,slidingUpPanelLayout,this));
+
+
+        ClusterMangerListener cml =new ClusterMangerListener(mClusterManager,pinRenderer,slidingUpPanelLayout,this, mMap);
+        mClusterManager.setOnClusterClickListener(cml);
+        mMap.setOnMarkerClickListener(cml);
+        //mMap.setOnMarkerClickListener(new ClusterMangerListener(mClusterManager,pinRenderer,slidingUpPanelLayout,this));
+
         mMap.setOnMapClickListener(this);
         mMap.setOnMapLoadedCallback(this);
 
