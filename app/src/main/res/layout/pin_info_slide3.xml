@@ -1,0 +1,359 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.sothree.slidinguppanel.SlidingUpPanelLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/sliding_layout_youtube"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="0dp"
+    android:layout_marginRight="0dp"
+    android:gravity="bottom"
+    app:layout_constraintLeft_toLeftOf="parent"
+    app:layout_constraintRight_toRightOf="parent"
+    app:umanoPanelHeight="0dp"
+    app:umanoShadowHeight="20dp"
+    tools:layout_editor_absoluteY="20dp"
+    app:umanoInitialState="hidden"
+    >
+
+    <LinearLayout
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/pin_fragment_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/cardview_light_background"
+        android:orientation="vertical">
+
+
+        <LinearLayout
+            android:id="@+id/pin_fragment_layout_linear_layout_for_title"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:background="#22264b"
+            tools:layout_constraintLeft_creator="1"
+            tools:layout_constraintRight_creator="1">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_weight="0.6">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="0.4"
+                    android:layout_gravity="left">
+
+                    <ImageView
+                        android:id="@+id/pin_fragment_layout_title_image"
+                        android:layout_width="40dp"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        android:padding="5dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/icon_sample_for_title_layout" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/pin_fragment_layout_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.3"
+                    android:background="@null"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="5dp"
+                    android:text="Pin Name"
+                    android:textColor="#e8edf3"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+
+                <TextView
+                    android:id="@+id/pin_fragment_layout_textview_subtitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:gravity="top|center_vertical"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:text="Subtitle"
+                    android:textColor="#e8edf3"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.4">
+
+
+                <ImageView
+                    android:id="@+id/pin_fragment_layout_imageview"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="5dp"
+                    android:src="@drawable/info_pin_placeholder" />
+
+                <ProgressBar
+                    android:id="@+id/progress_image"
+                    style="?android:attr/progressBarStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true" />
+
+            </RelativeLayout>
+
+            <ImageButton
+                android:id="@+id/pin_fragment_layout_sharebutton"
+                android:layout_width="0dp"
+                android:layout_weight="0.1"
+                android:layout_height="match_parent"
+                android:scaleType="fitCenter"
+                android:background="@null"
+
+                android:paddingTop="30dp"
+                android:padding="5dp"
+                android:src="@drawable/share_button_white" />
+
+
+        </LinearLayout>
+
+
+
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp">
+
+            <LinearLayout
+                android:id="@+id/pin_fragment_layout_inner_left_vertical_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="0.5"
+                android:orientation="vertical">
+
+
+                <LinearLayout
+                    android:id="@+id/pin_fragment_layout_textview_address_horizontal_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="0.1">
+
+                    <ImageView
+                        android:layout_width="0dp"
+                        android:layout_height="25dp"
+                        android:layout_weight="0.04"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_gravity="center_vertical"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/i01_address"/>
+
+                    <TextView
+                        android:id="@+id/pin_fragment_layout_textview_address"
+                        android:layout_width="0dp"
+                        android:layout_height="25dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="0.9"
+                        android:gravity="center_vertical"
+                        android:text="Address textfield"
+                        android:textSize="14sp"
+                        android:visibility="visible" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/pin_fragment_layout_textview_artists_horizontal_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="0.1">
+
+                    <ImageView
+                        android:layout_width="0dp"
+                        android:layout_height="25dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_weight="0.04"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/i02_artist" />
+
+                    <TextView
+                        android:id="@+id/pin_fragment_layout_textview_artists"
+                        android:layout_width="0dp"
+                        android:layout_height="25dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="0.9"
+                        android:gravity="center_vertical"
+                        android:text="Artists textfield"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/pin_fragment_layout_textview_songs_horizontal_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="0.1">
+
+                    <ImageView
+                        android:layout_width="0dp"
+                        android:layout_height="25dp"
+                        android:layout_weight="0.04"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_gravity="center_vertical"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/i03_song"/>
+
+                    <TextView
+                        android:id="@+id/pin_fragment_layout_textview_songs"
+                        android:layout_width="0dp"
+                        android:layout_height="25dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="0.9"
+                        android:gravity="center_vertical"
+                        android:text="songs textfield"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/pin_fragment_layout_textview_lyrics_horizontal_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="0.1">
+
+                    <ImageView
+                        android:layout_width="0dp"
+                        android:layout_height="25dp"
+                        android:layout_weight="0.04"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_gravity="center_vertical"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/i04_lyrics"/>
+
+                    <TextView
+                        android:id="@+id/pin_fragment_layout_textview_lyrics"
+                        android:layout_width="0dp"
+                        android:layout_height="25dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="0.9"
+                        android:gravity="center_vertical"
+                        android:text="lyrics textfield"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/pin_fragment_layout_textview_albums_horizontal_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="0.1">
+
+                    <ImageView
+                        android:layout_width="0dp"
+                        android:layout_height="25dp"
+                        android:layout_weight="0.04"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_gravity="center_vertical"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/i05_album"/>
+
+                    <TextView
+                        android:id="@+id/pin_fragment_layout_textview_albums"
+                        android:layout_width="0dp"
+                        android:layout_height="25dp"
+                        android:layout_weight="0.9"
+                        android:text="albums textfield"
+                        android:gravity="center_vertical"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <ScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="20dp"
+
+                    android:layout_weight="0.5">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/pin_fragment_layout_textview_info"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="top"
+                            android:paddingLeft="5dp"
+                            android:paddingRight="5dp"
+                            android:text="Info.............................."
+                            android:textSize="12sp" />
+
+
+                        <LinearLayout
+                            android:id="@+id/pin_fragment_layout_linearlayout_for_source"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="0.1">
+
+                            <TextView
+                                android:id="@+id/pin_fragment_layout_source_label"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:gravity="center_vertical"
+                                android:paddingLeft="5dp"
+                                android:paddingRight="5dp"
+                                android:text="Source:"
+                                android:textStyle="italic"
+                                android:textSize="12sp" />
+
+
+                            <TextView
+                                android:id="@+id/pin_fragment_layout_textview_formore"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:gravity="center_vertical"
+                                android:paddingRight="5dp"
+                                android:textColor="@color/blueLink"
+                                android:text="For More..."
+                                android:maxLines="1"
+                                android:textSize="12sp" />
+
+                        </LinearLayout></LinearLayout>
+
+
+                </ScrollView>
+
+
+            </LinearLayout>
+
+            <ProgressBar
+                android:id="@+id/progress_other_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center" />
+        </FrameLayout>
+
+
+    </LinearLayout>
+
+    <include
+        layout="@layout/you_tube_api"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</com.sothree.slidinguppanel.SlidingUpPanelLayout>

@@ -3,11 +3,16 @@ package com.example.stefano.lomux_pro;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Typeface;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.AsyncTask;
+import android.provider.SyncStateContract;
 import android.support.annotation.UiThread;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.ContextCompat;
 import android.text.SpannableString;
+import android.text.TextUtils;
 import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.View;
@@ -34,8 +39,13 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
+import static android.content.ContentValues.TAG;
 import static java.security.AccessController.getContext;
 
 /**
@@ -49,7 +59,16 @@ public class PinInfoSlidedPanel {
     private TextView title;
     private ImageView pin_title_image;
     private TextView address_textview;
+    private LinearLayout address_textview_horizontal_layout;
     private TextView artists_textview;
+    private LinearLayout artists_textview_horizontal_layout;
+    private TextView songs_textview;
+    private LinearLayout songs_textview_horizontal_layout;
+    private TextView lyrics_textview;
+    private LinearLayout lyrics_textview_horizontal_layout;
+    private TextView albums_textview;
+    private LinearLayout albums_textview_horizontal_layout;
+
     private TextView info;
     private TextView formore;
     private ImageView pin_fragment_image;
@@ -77,6 +96,17 @@ public class PinInfoSlidedPanel {
         this.pin_title_image = view.findViewById(R.id.pin_fragment_layout_title_image);
         this.address_textview = view.findViewById(R.id.pin_fragment_layout_textview_address);
         this.artists_textview = view.findViewById(R.id.pin_fragment_layout_textview_artists);
+        this.songs_textview = view.findViewById(R.id.pin_fragment_layout_textview_songs);
+        this.albums_textview = view.findViewById(R.id.pin_fragment_layout_textview_albums);
+        this.lyrics_textview = view.findViewById(R.id.pin_fragment_layout_textview_lyrics);
+        this.address_textview_horizontal_layout = view.findViewById(R.id.pin_fragment_layout_textview_address_horizontal_layout);
+        this.albums_textview_horizontal_layout = view.findViewById(R.id.pin_fragment_layout_textview_albums_horizontal_layout);
+        this.artists_textview_horizontal_layout = view.findViewById(R.id.pin_fragment_layout_textview_artists_horizontal_layout);
+        this.songs_textview_horizontal_layout = view.findViewById(R.id.pin_fragment_layout_textview_songs_horizontal_layout);
+        this.lyrics_textview_horizontal_layout = view.findViewById(R.id.pin_fragment_layout_textview_lyrics_horizontal_layout);
+
+
+
         this.info = view.findViewById(R.id.pin_fragment_layout_textview_info);
         this.formore = view.findViewById(R.id.pin_fragment_layout_textview_formore);
         this.pin_fragment_image = view.findViewById(R.id.pin_fragment_layout_imageview);
@@ -89,7 +119,7 @@ public class PinInfoSlidedPanel {
         this.youtube_button = view.findViewById(R.id.imagebutton_youtube);
         this.source_label =  view.findViewById(R.id.pin_fragment_layout_source_label);
         this.buttons_layout = view.findViewById(R.id.pin_fragment_layout_button_horizontal_layout);
-        this.content_layout = view.findViewById(R.id.pin_fragment_layout_inner_container_layout);
+        this.content_layout = view.findViewById(R.id.pin_fragment_layout_inner_left_vertical_layout);
         this.progressBar = view.findViewById(R.id.progress_other_info);
         this.source_layout = view.findViewById(R.id.pin_fragment_layout_linearlayout_for_source);
         this.loader = view.findViewById(R.id.progress_image);
@@ -100,6 +130,7 @@ public class PinInfoSlidedPanel {
 
        title.setText(pin.getTitle());
        subtitle_textview.setText(pin.getSubtitle());
+       //TODO capire come è implementato il subtitle nel database, eventualmente aggiungerlo
 
        switch(pin.getPinTypeidPinType().getIdPinType()) {
            case Pintype.PRIVATE:
@@ -131,6 +162,27 @@ public class PinInfoSlidedPanel {
                pin_title_image.setBackgroundResource(R.color.colorPrimary);
                break;
        }
+
+       loader.setVisibility(View.VISIBLE);
+       pin_fragment_image.setVisibility(View.VISIBLE);
+       final ProgressBar progressView = loader;
+       Picasso.with(view)
+               .load(pin.getImageUrl(view))
+               .into(pin_fragment_image, new Callback() {
+                   @Override
+                   public void onSuccess() {
+                       progressView.setVisibility(View.GONE);
+                   }
+
+                   @Override
+                   public void onError() {
+                       pin_fragment_image.setImageResource(R.drawable.info_pin_placeholder);
+                       progressView.setVisibility(View.GONE);
+
+                   }
+               });
+
+
    }
 
 
@@ -189,12 +241,96 @@ public class PinInfoSlidedPanel {
 
 
         private void complete_info(Pin ret, List<SongHasMediatype> mediatypeList){
-            artists_textview.setText(ret.getSongidSong().getArtistidArtist().getName());
+
+            //1) Address: geolocation from the lat-long, and address inside address_textview
+            Geocoder geocoder = new Geocoder(view, Locale.getDefault());
+            List<Address> addresses = null;
+
+
+            try {
+                addresses = geocoder.getFromLocation(
+                        pin.getLat().doubleValue(),
+                        pin.getLon().doubleValue(),
+                        // In this sample, get just a single address.
+                        1);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+
+            if (addresses.size() != 0 && addresses != null) {
+               address_textview_horizontal_layout.setVisibility(View.VISIBLE);
+               Address address = addresses.get(0);
+               String[] address_parts = address.getAddressLine(0).split(",");
+                address_textview.setText(address_parts[0]);
+                address_textview.setTypeface(null, Typeface.BOLD);
+                address_textview.setOnClickListener(new ArrowClickListener(pin.getLon().doubleValue(), pin.getLat().doubleValue()));
+            }
+
+            else {
+                address_textview_horizontal_layout.setVisibility(View.GONE);
+                Log.wtf("address", "not found");
+            }
+
+
+            //2) artists: get the artists from the pin; show them in the artists textview
+            //relation: pinhasartist
+            //TODO: for now the artist is just one, and linked to the individual song of the pin; update with the new model with the multiple possible artists
+            String artists = ret.getSongidSong().getArtistidArtist().getName();
+            if (artists != null && !(artists.equals("-"))) {
+                artists_textview_horizontal_layout.setVisibility(View.VISIBLE);
+                artists_textview.setText(ret.getSongidSong().getArtistidArtist().getName());
+            }
+            else {
+                artists_textview_horizontal_layout.setVisibility(View.GONE);
+            }
+
+
+            //3) songs: get the songs id from the pin; show the songs in the songs textview
+            //relation: pinhassongs
+            //then use relation songhasmediatype to put the right link on the individual songs
+            //TODO: for now the song is just one; update with the new model with the multiple possible songs
+            //TODO: capire perché le song sono uguali agli artisti
+            String songs = ret.getSongidSong().getTitle();
+            if (songs != null && !(songs.equals("-"))) {
+                songs_textview_horizontal_layout.setVisibility(View.VISIBLE);
+                songs_textview.setText(ret.getSongidSong().getArtistidArtist().getName());
+            }
+            else {
+                songs_textview_horizontal_layout.setVisibility(View.GONE);
+            }
+
+
+            //4) lyrics: if present, get the lyrics id and show preview in the textview, plus link to the site
+            //relation: songhaslyrics
+            String lyrics = ret.getSongidSong().getLyrics();
+            if (lyrics != null && !(lyrics.equals("-"))) {
+                lyrics_textview_horizontal_layout.setVisibility(View.VISIBLE);
+                lyrics_textview.setText(ret.getSongidSong().getArtistidArtist().getName());
+            }
+            else {
+                lyrics_textview_horizontal_layout.setVisibility(View.GONE);
+            }
+
+            //5) albums: if present, get the albums and show the names in the textview, plus link if they have mediatype
+            //relations: pinhasalbum, albumhasmediatype
+            String albums = ret.getSongidSong().getLyrics();
+            if (albums != null && !(albums.equals("-"))) {
+                albums_textview_horizontal_layout.setVisibility(View.VISIBLE);
+                albums_textview.setText(ret.getSongidSong().getArtistidArtist().getName());
+            }
+            else {
+                albums_textview_horizontal_layout.setVisibility(View.GONE);
+            }
+
+            //6) set description of the pin in the info text view, inside the scrollable view. The scrollable view will
+            //also contain the source (if present; if not, the visibility of the layout containing the source has to
+            //be set to gone)
+
             info.setText(ret.getInfo());
 
             SpannableString formore_text = new SpannableString(ret.getSourceidSource().getSourceName());
             formore_text.setSpan(new UnderlineSpan(), 0, ret.getSourceidSource().getSourceName().length(), 0);
-
             formore.setText(formore_text);
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 0);
             lp.weight=0.1f;
@@ -212,27 +348,8 @@ public class PinInfoSlidedPanel {
                 source_layout.setLayoutParams(lp);
 
             }
-          /*  if (ret.getImage()>0)
-                Picasso.with(view).load(ret.getImageUrl(view)).into(pin_fragment_image);*/
 
-            loader.setVisibility(View.VISIBLE);
-            pin_fragment_image.setVisibility(View.VISIBLE);
-            final ProgressBar progressView = loader;
-            Picasso.with(view)
-                    .load(ret.getImageUrl(view))
-                    .into(pin_fragment_image, new Callback() {
-                        @Override
-                        public void onSuccess() {
-                            progressView.setVisibility(View.GONE);
-                        }
 
-                        @Override
-                        public void onError() {
-                            pin_fragment_image.setImageResource(R.drawable.info_pin_placeholder);
-                            progressView.setVisibility(View.GONE);
-
-                        }
-                    });
 
 
 
@@ -241,58 +358,64 @@ public class PinInfoSlidedPanel {
              //       .add(R.id.youtube_fragment, new YoutubeFragment(), "info").commit();
 
 
+            //7) set button for sharing
+            //TODO recuperare codice sharelistener
+            //share_button.setOnClickListener(new ShareListener(args.getDouble(PinInfoFragment.ARG_LNG), args.getDouble(PinInfoFragment.ARG_LAT), getContext().getPackageManager()));
+
+            //TODO FINITA LA PROVA RIABILITARE TUTTO DOPO!!!!!!!!!!!!!!!
+            return;
 
 
-           // arrow_button.setOnClickListener(new ArrowClickListener(args.getDouble(PinInfoFragment.ARG_LNG), args.getDouble(PinInfoFragment.ARG_LAT)));
-           // share_button.setOnClickListener(new ShareListener(args.getDouble(PinInfoFragment.ARG_LNG), args.getDouble(PinInfoFragment.ARG_LAT), getContext().getPackageManager()));
+//            boolean hasyoutubelink=false, hasspotifylink=false;
+//            if(mediatypeList.isEmpty()){
+//                media_button.setAlpha(0.2f);
+//                media_button.setEnabled(false);
+//            }
+//            else{
+//                for(final SongHasMediatype media:mediatypeList){
+//                    if(media.getMediatypeDTO().getMedia().toLowerCase().equals("youtube")){
+//                        hasyoutubelink=true;
+//                        youtube_button.setOnClickListener(new View.OnClickListener() {
+//                            @Override
+//                            public void onClick(View v) {
+//                                SlidingUpPanelLayout slidingUpPanelLayout = view.findViewById(R.id.sliding_layout_youtube);
+//                                view.getSupportFragmentManager().beginTransaction()
+//                                        .add(R.id.youtube_fragment, new YoutubeFragment(slidingUpPanelLayout,media.getUrlMedia()), "info").commit();
+//                            }
+//                        });
+//                    }
+//                    else if(media.getMediatypeDTO().getMedia().toLowerCase().equals("spotify")){
+//                        hasspotifylink=true;
+//                        spotify_button.setOnClickListener(new View.OnClickListener() {
+//                            @Override
+//                            public void onClick(View view) {
+//
+//                                if(isPackageInstalled("com.spotify.music",view.getContext().getPackageManager()))
+//                                {
+//                                    String spotifyUri = media.getUrlMedia();
+//
+//                                    Intent spotifyIntent = new Intent(Intent.ACTION_VIEW);
+//                                    spotifyIntent.setPackage("com.spotify.music");
+//                                    spotifyIntent.setData(Uri.parse(spotifyUri));
+//                                    view.getContext().startActivity(spotifyIntent);
+//                                }
+//                                else{
+//                                    Intent intent = new Intent(Intent.ACTION_VIEW);
+//                                    intent.setData(Uri.parse("https://play.google.com/store/apps/details?id=com.spotify.music"));
+//                                    view.getContext().startActivity(intent);
+//                                }
+//                            }
+//                        });
+//                    }
+//                    }
+//                }
+//
+//            media_button.setOnClickListener(new MediaButtonClickListener(buttons_layout, true, hasyoutubelink, hasspotifylink));
+//            back_button.setOnClickListener(new MediaButtonClickListener(buttons_layout, false, false, false));
 
+            //TODO
+            //retrieve address from pins//address_textview.setText(ret.getAddress());
 
-            boolean hasyoutubelink=false, hasspotifylink=false;
-            if(mediatypeList.isEmpty()){
-                media_button.setAlpha(0.2f);
-                media_button.setEnabled(false);
-            }
-            else{
-                for(final SongHasMediatype media:mediatypeList){
-                    if(media.getMediatypeDTO().getMedia().toLowerCase().equals("youtube")){
-                        hasyoutubelink=true;
-                        youtube_button.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                SlidingUpPanelLayout slidingUpPanelLayout = view.findViewById(R.id.sliding_layout_youtube);
-                                view.getSupportFragmentManager().beginTransaction()
-                                        .add(R.id.youtube_fragment, new YoutubeFragment(slidingUpPanelLayout,media.getUrlMedia()), "info").commit();
-                            }
-                        });
-                    }
-                    else if(media.getMediatypeDTO().getMedia().toLowerCase().equals("spotify")){
-                        hasspotifylink=true;
-                        spotify_button.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-
-                                if(isPackageInstalled("com.spotify.music",view.getContext().getPackageManager()))
-                                {
-                                    String spotifyUri = media.getUrlMedia();
-
-                                    Intent spotifyIntent = new Intent(Intent.ACTION_VIEW);
-                                    spotifyIntent.setPackage("com.spotify.music");
-                                    spotifyIntent.setData(Uri.parse(spotifyUri));
-                                    view.getContext().startActivity(spotifyIntent);
-                                }
-                                else{
-                                    Intent intent = new Intent(Intent.ACTION_VIEW);
-                                    intent.setData(Uri.parse("https://play.google.com/store/apps/details?id=com.spotify.music"));
-                                    view.getContext().startActivity(intent);
-                                }
-                            }
-                        });
-                    }
-                    }
-                }
-
-            media_button.setOnClickListener(new MediaButtonClickListener(buttons_layout, true, hasyoutubelink, hasspotifylink));
-            back_button.setOnClickListener(new MediaButtonClickListener(buttons_layout, false, false, false));
           }
 
 
@@ -306,5 +429,36 @@ public class PinInfoSlidedPanel {
         }
 
     }
+
+    public class ArrowClickListener implements View.OnClickListener
+    {
+
+        private double lng;
+        private double lat;
+
+        public ArrowClickListener(double lng, double lat) {
+            this.lng = lng;
+            this.lat = lat;
+            Log.d("Directions", "created listener");
+        }
+
+        @Override
+        public void onClick(View v)
+        {
+            Log.d("Directions", String.valueOf(lng) + " - " + String.valueOf(lat));
+            Uri gmmIntentUri = Uri.parse("google.navigation:q="+String.valueOf(lat)+","+String.valueOf(lng));
+            Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+            mapIntent.setPackage("com.google.android.apps.maps");
+            view.startActivity(mapIntent);
+
+        }
+
+    }
+
+
+
+
+
+
     }
 

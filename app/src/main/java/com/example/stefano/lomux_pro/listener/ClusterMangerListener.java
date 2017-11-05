@@ -63,11 +63,16 @@ public class ClusterMangerListener implements GoogleMap.OnMarkerClickListener, C
             @Override
             public void onPanelSlide(View panel, float slideOffset) {
                  if(slideOffset>0) { //The panel is slieded up
+                     map.getUiSettings().setScrollGesturesEnabled(false);
+
                      if(!start){
                         pinInfoSlidedPanel.setAdditionalInfo();
                         start=true;
                      }
 
+                 }
+                 else {
+                     map.getUiSettings().setScrollGesturesEnabled(true);
                  }
             }
 

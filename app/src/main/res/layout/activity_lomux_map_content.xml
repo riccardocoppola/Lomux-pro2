@@ -34,7 +34,8 @@
         android:gravity="bottom"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:umanoPanelHeight="68dp"
+        app:umanoPanelHeight="150dp"
+        app:umanoDragView="@+id/pin_fragment_layout_linear_layout_for_title"
         app:umanoShadowHeight="20dp"
         tools:layout_editor_absoluteY="9dp">
 
@@ -51,9 +52,9 @@
 
 
         <include
-            layout="@layout/pin_info_slide2"
+            layout="@layout/pin_info_slide3"
             android:layout_width="match_parent"
-            android:layout_height="505dp" />
+            android:layout_height="400dp" />
 
     </com.sothree.slidinguppanel.SlidingUpPanelLayout>
 

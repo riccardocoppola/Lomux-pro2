@@ -113,10 +113,10 @@ public class Pin implements ClusterItem {
 
     public String getImageUrl(Context context)
     {
-        if (image!=0)
+        //if (image!=0)
             return context.getString(R.string.image_path) + idPin + ".png";
-        else
-            return null;
+       // else
+         //   return null;
     }
 
     public Song getSongidSong() {
