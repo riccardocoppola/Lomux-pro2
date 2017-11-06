@@ -29,10 +29,15 @@ import com.example.stefano.lomux_pro.callbacks.SongCallback;
 import com.example.stefano.lomux_pro.fragment.YoutubeFragment;
 import com.example.stefano.lomux_pro.listener.MediaButtonClickListener;
 import com.example.stefano.lomux_pro.listener.URIClickListener;
+import com.example.stefano.lomux_pro.model.Album;
+import com.example.stefano.lomux_pro.model.Artist;
 import com.example.stefano.lomux_pro.model.Link;
+import com.example.stefano.lomux_pro.model.Lyrics;
 import com.example.stefano.lomux_pro.model.Mediatype;
 import com.example.stefano.lomux_pro.model.Pin;
+import com.example.stefano.lomux_pro.model.PinHasPintype;
 import com.example.stefano.lomux_pro.model.Pintype;
+import com.example.stefano.lomux_pro.model.Song;
 import com.example.stefano.lomux_pro.model.SongHasMediatype;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.squareup.picasso.Callback;
@@ -130,38 +135,39 @@ public class PinInfoSlidedPanel {
 
        title.setText(pin.getTitle());
        subtitle_textview.setText(pin.getSubtitle());
-
-       switch(pin.getPinTypeidPinType().getIdPinType()) {
-           case Pintype.PRIVATE:
-               layout_title.setBackgroundColor(ContextCompat.getColor(view, R.color.colorPrivate));
-               pin_title_image.setImageResource(R.drawable.title_layout_p);
-               break;
-           case Pintype.WORK:
-               layout_title.setBackgroundColor(ContextCompat.getColor(view, R.color.colorWork));
-               pin_title_image.setImageResource(R.drawable.title_layout_w);
-               break;
-           case Pintype.STUDIO:
-               layout_title.setBackgroundColor(ContextCompat.getColor(view, R.color.colorStudio));
-               pin_title_image.setImageResource(R.drawable.title_layout_r);
-               break;
-           case Pintype.MONUMENT:
-               layout_title.setBackgroundColor(ContextCompat.getColor(view, R.color.colorMonument));
-               pin_title_image.setImageResource(R.drawable.title_layout_m);
-               break;
-           case Pintype.VENUE:
-               layout_title.setBackgroundColor(ContextCompat.getColor(view, R.color.colorVenue));
-               pin_title_image.setImageResource(R.drawable.title_layout_v);
-               break;
-           case Pintype.LOTM:
-               layout_title.setBackgroundColor(ContextCompat.getColor(view, R.color.colorLOTM));
-               pin_title_image.setImageResource(R.drawable.title_layout_l);
-               break;
-           default:
-               layout_title.setBackgroundColor(ContextCompat.getColor(view, R.color.colorPrimary));
-               pin_title_image.setBackgroundResource(R.color.colorPrimary);
-               break;
+       //TODO: menage case of more pintypes
+       for(PinHasPintype p:pin.getPinHasPintypeDTOList()) {
+           switch (p.getPinHasPintypeDTOPK().getPintypeidPinType()) {
+               case Pintype.PRIVATE:
+                   layout_title.setBackgroundColor(ContextCompat.getColor(view, R.color.colorPrivate));
+                   pin_title_image.setImageResource(R.drawable.title_layout_p);
+                   break;
+               case Pintype.WORK:
+                   layout_title.setBackgroundColor(ContextCompat.getColor(view, R.color.colorWork));
+                   pin_title_image.setImageResource(R.drawable.title_layout_w);
+                   break;
+               case Pintype.STUDIO:
+                   layout_title.setBackgroundColor(ContextCompat.getColor(view, R.color.colorStudio));
+                   pin_title_image.setImageResource(R.drawable.title_layout_r);
+                   break;
+               case Pintype.MONUMENT:
+                   layout_title.setBackgroundColor(ContextCompat.getColor(view, R.color.colorMonument));
+                   pin_title_image.setImageResource(R.drawable.title_layout_m);
+                   break;
+               case Pintype.VENUE:
+                   layout_title.setBackgroundColor(ContextCompat.getColor(view, R.color.colorVenue));
+                   pin_title_image.setImageResource(R.drawable.title_layout_v);
+                   break;
+               case Pintype.LOTM:
+                   layout_title.setBackgroundColor(ContextCompat.getColor(view, R.color.colorLOTM));
+                   pin_title_image.setImageResource(R.drawable.title_layout_l);
+                   break;
+               default:
+                   layout_title.setBackgroundColor(ContextCompat.getColor(view, R.color.colorPrimary));
+                   pin_title_image.setBackgroundResource(R.color.colorPrimary);
+                   break;
+           }
        }
-
        loader.setVisibility(View.VISIBLE);
        pin_fragment_image.setVisibility(View.VISIBLE);
        final ProgressBar progressView = loader;
@@ -212,11 +218,13 @@ public class PinInfoSlidedPanel {
         protected Void doInBackground(Void... params) {
             try {
                 final Pin ret = PinsCallback.getInstance().get_other_info(pin.getIdPin());
-                final List<SongHasMediatype> mediatypeList = SongCallback.getInstance().get_media_info(ret.getSongidSong().getIdSong());
+                final List<Song> songs = PinsCallback.getInstance().getSongsByPin(ret.getIdPin());
+                final List<Artist> artists = PinsCallback.getInstance().getArtistsByPin(ret.getIdPin());
+                final List<Album> albums = PinsCallback.getInstance().getAlbumsByPin(ret.getIdPin());
                 view.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        complete_info(ret, mediatypeList);
+                        complete_info(ret, songs, artists, albums);
 
                     }
                 });
@@ -239,7 +247,7 @@ public class PinInfoSlidedPanel {
 
 
 
-        private void complete_info(Pin ret, List<SongHasMediatype> mediatypeList){
+        private void complete_info(Pin ret, List<Song> songs, List<Artist> artists, List<Album> albums ){
 
             //1) Address: geolocation from the lat-long, and address inside address_textview
             Geocoder geocoder = new Geocoder(view, Locale.getDefault());
@@ -274,11 +282,16 @@ public class PinInfoSlidedPanel {
 
             //2) artists: get the artists from the pin; show them in the artists textview
             //relation: pinhasartist
-            //TODO: for now the artist is just one, and linked to the individual song of the pin; update with the new model with the multiple possible artists
-            String artists = ret.getSongidSong().getArtistidArtist().getName();
-            if (artists != null && !(artists.equals("-"))) {
+            if (artists != null && !(artists.isEmpty())) {
+                String listArtist="";
+                for(Artist artist:artists){
+                    listArtist+=artist.getName()+", ";
+                }
+
+                if(listArtist.length()>0) listArtist = listArtist.substring(0, listArtist.length() - 2);
+
                 artists_textview_horizontal_layout.setVisibility(View.VISIBLE);
-                artists_textview.setText(ret.getSongidSong().getArtistidArtist().getName());
+                artists_textview.setText(listArtist);
             }
             else {
                 artists_textview_horizontal_layout.setVisibility(View.GONE);
@@ -288,12 +301,21 @@ public class PinInfoSlidedPanel {
             //3) songs: get the songs id from the pin; show the songs in the songs textview
             //relation: pinhassongs
             //then use relation songhasmediatype to put the right link on the individual songs
-            //TODO: for now the song is just one; update with the new model with the multiple possible songs
-            //TODO: capire perché le song sono uguali agli artisti
-            String songs = ret.getSongidSong().getTitle();
-            if (songs != null && !(songs.equals("-"))) {
+
+            if (songs != null && !(songs.isEmpty())) {
+                String listSong="";
+                String listLyrics="";
+                for(Song song:songs){
+                    listSong+=song.getTitle()+"("+song.getAlbumidAlbum().getName()+"), ";
+
+
+
+                }
+
+                if(listSong.length()>0) listSong = listSong.substring(0, listSong.length() - 2);
+
                 songs_textview_horizontal_layout.setVisibility(View.VISIBLE);
-                songs_textview.setText(ret.getSongidSong().getArtistidArtist().getName());
+                songs_textview.setText(listSong);
             }
             else {
                 songs_textview_horizontal_layout.setVisibility(View.GONE);
@@ -302,10 +324,10 @@ public class PinInfoSlidedPanel {
 
             //4) lyrics: if present, get the lyrics id and show preview in the textview, plus link to the site
             //relation: songhaslyrics
-            String lyrics = ret.getSongidSong().getLyrics();
+            Lyrics lyrics =new Lyrics();
             if (lyrics != null && !(lyrics.equals("-"))) {
                 lyrics_textview_horizontal_layout.setVisibility(View.VISIBLE);
-                lyrics_textview.setText(ret.getSongidSong().getArtistidArtist().getName());
+                lyrics_textview.setText(lyrics.getUrlLirics());
             }
             else {
                 lyrics_textview_horizontal_layout.setVisibility(View.GONE);
@@ -313,14 +335,21 @@ public class PinInfoSlidedPanel {
 
             //5) albums: if present, get the albums and show the names in the textview, plus link if they have mediatype
             //relations: pinhasalbum, albumhasmediatype
-            String albums = ret.getSongidSong().getLyrics();
-            if (albums != null && !(albums.equals("-"))) {
+
+            if (albums != null && !(albums.isEmpty())) {
+                String listAlbum ="";
+                for(Album album:albums){
+                    listAlbum+=album.getName()+"("+album.getYear()+"), ";
+                }
+                if(listAlbum.length()>0) listAlbum=listAlbum.substring(0, listAlbum.length()-2);
+
                 albums_textview_horizontal_layout.setVisibility(View.VISIBLE);
-                albums_textview.setText(ret.getSongidSong().getArtistidArtist().getName());
+                albums_textview.setText(listAlbum);
             }
             else {
                 albums_textview_horizontal_layout.setVisibility(View.GONE);
             }
+
 
             //6) set description of the pin in the info text view, inside the scrollable view. The scrollable view will
             //also contain the source (if present; if not, the visibility of the layout containing the source has to

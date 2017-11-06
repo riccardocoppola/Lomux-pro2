@@ -1,14 +1,21 @@
 package com.example.stefano.lomux_pro.rest;
 
 
+import com.example.stefano.lomux_pro.model.Album;
+import com.example.stefano.lomux_pro.model.Artist;
 import com.example.stefano.lomux_pro.model.Pin;
+import com.example.stefano.lomux_pro.model.PinHasPintype;
+import com.example.stefano.lomux_pro.model.Song;
 import com.example.stefano.lomux_pro.model.SongHasMediatype;
 
 import java.lang.reflect.Array;
 import java.util.List;
 
 import retrofit2.Call;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.POST;
 import retrofit2.http.Query;
 
 /**
@@ -30,5 +37,21 @@ public interface PinClient {
     @GET("read_database/get_media_info")
     //@FormUrlEncoded
     Call<List<SongHasMediatype>> getMediaInfo(@Query("songId") int id);
+
+    @POST("read_database/get_songs_by_pin")
+    @FormUrlEncoded
+    Call<List<Song>> getSongsByPin(@Field("pinId") String pinId);
+
+    @POST("read_database/get_albums_by_pin")
+    @FormUrlEncoded
+    Call<List<Album>> getAlbumsByPin(@Field("pinId") String pinId);
+
+    @POST("read_database/get_artists_by_pin")
+    @FormUrlEncoded
+    Call<List<Artist>> getArtistsByPin(@Field("pinId") String pinId);
+
+    @POST("read_database/get_pintype_by_pin")
+    @FormUrlEncoded
+    Call<List<PinHasPintype>> getPintypeByPin(@Field("pinId") String pinId);
 
 }

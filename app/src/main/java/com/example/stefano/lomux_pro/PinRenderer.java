@@ -8,6 +8,7 @@ package com.example.stefano.lomux_pro;
         import android.content.Context;
 
         import com.example.stefano.lomux_pro.model.Pin;
+        import com.example.stefano.lomux_pro.model.PinHasPintype;
         import com.example.stefano.lomux_pro.model.Pintype;
         import com.google.android.gms.maps.GoogleMap;
         import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -33,7 +34,15 @@ public class PinRenderer extends DefaultClusterRenderer<Pin> {
     protected void onBeforeClusterItemRendered(Pin curPin, MarkerOptions markerOptions) {
         // Draw a single person.
         // Set the info window to show their name.
-        switch (curPin.getPinTypeidPinType().getIdPinType()) {
+        //TODO: menage more pintypes
+        int pintype=0;
+       for(PinHasPintype pinHasPintype:curPin.getPinHasPintypeDTOList()){
+           if(pinHasPintype.getIsprincipal()==1){
+               pintype=pinHasPintype.getPinHasPintypeDTOPK().getPintypeidPinType();
+           }
+       }
+       switch (pintype) {
+
             case Pintype.VENUE:
                 markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_icon_v));
                break;
