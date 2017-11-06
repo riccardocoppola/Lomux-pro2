@@ -7,18 +7,19 @@ import java.util.List;
  */
 
 public class Song {
-    private int idSong;
+    private Integer idSong;
     private String title;
-    private String lyrics;
-    private Artist artistidArtist;
+    private List<Artist> artistDTOList;
+    private List<Pin> pinDTOList;
+    private Album albumidAlbum;
+    private Lyrics lyricsidLyrics;
     private List<SongHasMediatype> songHasMediatypeDTOList;
-    //private List<PinDTO> pinDTOList;
 
-    public int getIdSong() {
+    public Integer getIdSong() {
         return idSong;
     }
 
-    public void setIdSong(int idSong) {
+    public void setIdSong(Integer idSong) {
         this.idSong = idSong;
     }
 
@@ -30,20 +31,36 @@ public class Song {
         this.title = title;
     }
 
-    public String getLyrics() {
-        return lyrics;
+    public List<Artist> getArtistDTOList() {
+        return artistDTOList;
     }
 
-    public void setLyrics(String lyrics) {
-        this.lyrics = lyrics;
+    public void setArtistDTOList(List<Artist> artistDTOList) {
+        this.artistDTOList = artistDTOList;
     }
 
-    public Artist getArtistidArtist() {
-        return artistidArtist;
+    public List<Pin> getPinDTOList() {
+        return pinDTOList;
     }
 
-    public void setArtistidArtist(Artist artistidArtist) {
-        this.artistidArtist = artistidArtist;
+    public void setPinDTOList(List<Pin> pinDTOList) {
+        this.pinDTOList = pinDTOList;
+    }
+
+    public Album getAlbumidAlbum() {
+        return albumidAlbum;
+    }
+
+    public void setAlbumidAlbum(Album albumidAlbum) {
+        this.albumidAlbum = albumidAlbum;
+    }
+
+    public Lyrics getLyricsidLyrics() {
+        return lyricsidLyrics;
+    }
+
+    public void setLyricsidLyrics(Lyrics lyricsidLyrics) {
+        this.lyricsidLyrics = lyricsidLyrics;
     }
 
     public List<SongHasMediatype> getSongHasMediatypeDTOList() {

@@ -15,16 +15,15 @@ public class Pintype {
     public static final int     MONUMENT= 5;
     public static final int     LOTM= 6;
 
-    private int  idPinType;
+    private Integer idPinType;
     private String type;
-    private List<Pin> pinDTOList;
+    private List<PinHasPintype> pinHasPintypeDTOList;
 
-
-    public int getIdPinType() {
+    public Integer getIdPinType() {
         return idPinType;
     }
 
-    public void setIdPinType(int idPinType) {
+    public void setIdPinType(Integer idPinType) {
         this.idPinType = idPinType;
     }
 
@@ -36,11 +35,11 @@ public class Pintype {
         this.type = type;
     }
 
-    public List<Pin> getPinDTOList() {
-        return pinDTOList;
+    public List<PinHasPintype> getPinHasPintypeDTOList() {
+        return pinHasPintypeDTOList;
     }
 
-    public void setPinDTOList(List<Pin> pinDTOList) {
-        this.pinDTOList = pinDTOList;
+    public void setPinHasPintypeDTOList(List<PinHasPintype> pinHasPintypeDTOList) {
+        this.pinHasPintypeDTOList = pinHasPintypeDTOList;
     }
 }

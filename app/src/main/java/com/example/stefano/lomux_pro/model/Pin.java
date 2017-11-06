@@ -8,6 +8,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.ClusterItem;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import static android.provider.Settings.System.getString;
 
@@ -21,19 +22,43 @@ public class Pin implements ClusterItem {
     private String idPin;
     private BigDecimal lat;
     private BigDecimal lon;
-    private String title="";
-    private String subtitle="";
+    private String title;
+    private String subtitle;
     private String info;
     private String sourceLink;
-    private short  image;
-    private int  relevance;
-    //private List<Itinerary> itineraryDTOList;
-    private Pintype pinTypeidPinType;
-    private Song songidSong;
+    private Short image;
+    private Integer relevance;
+    private List<Artist> artistDTOList;
+    private List<Album> albumDTOList;
+    private List<Itinerary> itineraryDTOList;
+    private List<Song> songDTOList;
+    private List<PinHasPintype> pinHasPintypeDTOList;
     private Source sourceidSource;
 
 
+    public String getIdPin() {
+        return idPin;
+    }
 
+    public void setIdPin(String idPin) {
+        this.idPin = idPin;
+    }
+
+    public BigDecimal getLat() {
+        return lat;
+    }
+
+    public void setLat(BigDecimal lat) {
+        this.lat = lat;
+    }
+
+    public BigDecimal getLon() {
+        return lon;
+    }
+
+    public void setLon(BigDecimal lon) {
+        this.lon = lon;
+    }
 
     public void setTitle(String title) {
         this.title = title;
@@ -63,68 +88,60 @@ public class Pin implements ClusterItem {
         this.sourceLink = sourceLink;
     }
 
-    public short getImage() {
+    public Short getImage() {
         return image;
     }
 
-    public void setImage(short image) {
+    public void setImage(Short image) {
         this.image = image;
     }
 
-    public int getRelevance() {
+    public Integer getRelevance() {
         return relevance;
     }
 
-    public void setRelevance(int relevance) {
+    public void setRelevance(Integer relevance) {
         this.relevance = relevance;
     }
 
-    public Pintype getPinTypeidPinType() {
-        return pinTypeidPinType;
+    public List<Artist> getArtistDTOList() {
+        return artistDTOList;
     }
 
-    public void setPinTypeidPinType(Pintype pinTypeidPinType) {
-        this.pinTypeidPinType = pinTypeidPinType;
+    public void setArtistDTOList(List<Artist> artistDTOList) {
+        this.artistDTOList = artistDTOList;
     }
 
-    public String getIdPin() {
-        return idPin;
+    public List<Album> getAlbumDTOList() {
+        return albumDTOList;
     }
 
-    public void setIdPin(String idPin) {
-        this.idPin = idPin;
+    public void setAlbumDTOList(List<Album> albumDTOList) {
+        this.albumDTOList = albumDTOList;
     }
 
-    public BigDecimal getLat() {
-        return lat;
+    public List<Itinerary> getItineraryDTOList() {
+        return itineraryDTOList;
     }
 
-    public void setLat(BigDecimal lat) {
-        this.lat = lat;
+    public void setItineraryDTOList(List<Itinerary> itineraryDTOList) {
+        this.itineraryDTOList = itineraryDTOList;
     }
 
-    public BigDecimal getLon() {
-        return lon;
+    public List<Song> getSongDTOList() {
+        return songDTOList;
     }
 
-    public void setLon(BigDecimal lon) {
-        this.lon = lon;
+    public void setSongDTOList(List<Song> songDTOList) {
+        this.songDTOList = songDTOList;
     }
 
-    public String getImageUrl(Context context)
-    {
-        //if (image!=0)
-            return context.getString(R.string.image_path) + idPin + ".png";
-       // else
-         //   return null;
+    public List<PinHasPintype> getPinHasPintypeDTOList() {
+        return pinHasPintypeDTOList;
     }
 
-    public Song getSongidSong() {
-        return songidSong;
-    }
-
-    public void setSongidSong(Song songidSong) {
-        this.songidSong = songidSong;
+    public void setPinHasPintypeDTOList(List<PinHasPintype> pinHasPintypeDTOList) {
+        this.pinHasPintypeDTOList = pinHasPintypeDTOList;
     }
 
     public Source getSourceidSource() {
@@ -134,6 +151,15 @@ public class Pin implements ClusterItem {
     public void setSourceidSource(Source sourceidSource) {
         this.sourceidSource = sourceidSource;
     }
+
+    public String getImageUrl(Context context)
+    {
+        if (image!=0)
+            return context.getString(R.string.image_path) + idPin + ".png";
+        else
+           return null;
+    }
+
 
     @Override
     public LatLng getPosition() {

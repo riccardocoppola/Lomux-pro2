@@ -130,7 +130,6 @@ public class PinInfoSlidedPanel {
 
        title.setText(pin.getTitle());
        subtitle_textview.setText(pin.getSubtitle());
-       //TODO capire come è implementato il subtitle nel database, eventualmente aggiungerlo
 
        switch(pin.getPinTypeidPinType().getIdPinType()) {
            case Pintype.PRIVATE:

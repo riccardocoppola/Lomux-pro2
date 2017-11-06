@@ -1,19 +1,21 @@
 package com.example.stefano.lomux_pro.model;
 
+import java.util.List;
+
 /**
  * Created by Stefano on 18/10/2017.
  */
 
 public class Source {
-    private int idSource;
+    private Integer idSource;
     private String sourceName;
-    //private List<PinDTO> pinDTOList;
+    private List<Pin> pinDTOList;
 
-    public int getIdSource() {
+    public Integer getIdSource() {
         return idSource;
     }
 
-    public void setIdSource(int idSource) {
+    public void setIdSource(Integer idSource) {
         this.idSource = idSource;
     }
 
@@ -23,5 +25,13 @@ public class Source {
 
     public void setSourceName(String sourceName) {
         this.sourceName = sourceName;
+    }
+
+    public List<Pin> getPinDTOList() {
+        return pinDTOList;
+    }
+
+    public void setPinDTOList(List<Pin> pinDTOList) {
+        this.pinDTOList = pinDTOList;
     }
 }
