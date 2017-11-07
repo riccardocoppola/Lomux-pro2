@@ -37,6 +37,7 @@ import retrofit2.Response;
 
 public class PinsCallback {
     private static PinsCallback pinsCallback = null;
+    private Call<List<Pin>> call;
 
 
     public static PinsCallback getInstance() {
@@ -46,12 +47,15 @@ public class PinsCallback {
 
     }
 
+    public Call<List<Pin>> getCall() {
+        return call;
+    }
 
     public void get_local_pins(final GoogleMap mMap, LatLngBounds maxArea, List<String> ids, final LomuxMapActivity context) {
 
         LatLng n_e = maxArea.northeast;
         LatLng s_w = maxArea.southwest;
-        Call<List<Pin>> call = RestConfig.getInstance().getPinClient().getLocalPins(n_e.latitude, n_e.longitude, s_w.latitude, s_w.longitude, ids);
+        call = RestConfig.getInstance().getPinClient().getLocalPins(n_e.latitude, n_e.longitude, s_w.latitude, s_w.longitude, ids);
         call.enqueue(new Callback<List<Pin>>() {
 
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)

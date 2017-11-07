@@ -43,7 +43,7 @@ public class MapChangesListener implements GoogleMap.OnCameraIdleListener{
             Log.d("Camera","NO UPDATE");
             context.clusterManagerOnCameraIdle();
         }
-        else
+        else if(PinsCallback.getInstance().getCall()==null||(!PinsCallback.getInstance().getCall().isExecuted()))
         {
             //the actual visible area is bigger than before or the user has moved the map, need to refresh
             //and there aren't pendent call
@@ -51,6 +51,10 @@ public class MapChangesListener implements GoogleMap.OnCameraIdleListener{
             apply_bounds();
             PinsCallback.getInstance().get_local_pins(mMap, actualMaxVisibleArea, context.getListIds(), context);
             Log.d("Camera","UPDATE");
+        }
+        else{
+            Log.d("Camera","NO UPDATE");
+            context.clusterManagerOnCameraIdle();
         }
 
 

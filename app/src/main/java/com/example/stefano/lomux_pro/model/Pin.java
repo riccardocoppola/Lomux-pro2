@@ -157,7 +157,7 @@ public class Pin implements ClusterItem {
         if (image!=0)
             return context.getString(R.string.image_path) + idPin + ".png";
         else
-           return null;
+           return "0";
     }
 
 

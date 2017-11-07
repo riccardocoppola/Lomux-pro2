@@ -11,8 +11,13 @@ import android.provider.SyncStateContract;
 import android.support.annotation.UiThread;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.ContextCompat;
+import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.Spanned;
 import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
+import android.text.style.StyleSpan;
 import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.View;
@@ -135,8 +140,14 @@ public class PinInfoSlidedPanel {
 
        title.setText(pin.getTitle());
        subtitle_textview.setText(pin.getSubtitle());
+
+       LinearLayout pintype_layout=view.findViewById(R.id.layout_pintype);
        //TODO: menage case of more pintypes
+       if(pintype_layout.getChildCount()>1)
+             pintype_layout.removeViews(1,pintype_layout.getChildCount()-1);
+
        for(PinHasPintype p:pin.getPinHasPintypeDTOList()) {
+           if(p.getIsprincipal()!=0){//is principal
            switch (p.getPinHasPintypeDTOPK().getPintypeidPinType()) {
                case Pintype.PRIVATE:
                    layout_title.setBackgroundColor(ContextCompat.getColor(view, R.color.colorPrivate));
@@ -167,10 +178,44 @@ public class PinInfoSlidedPanel {
                    pin_title_image.setBackgroundResource(R.color.colorPrimary);
                    break;
            }
+           }
+           else {
+
+               ImageView other=new ImageView(view.getApplicationContext());
+               //other.getLayoutParams().width = (int) view.getApplicationContext().getResources().getDimension(R.dimen.otherpintype_width);
+               other.setLayoutParams(new LinearLayout.LayoutParams(100, 100));
+               other.getLayoutParams().width = (int) view.getApplicationContext().getResources().getDimension(R.dimen.otherpintype_width);
+               //other.getLayoutParams().width=20;
+               switch (p.getPinHasPintypeDTOPK().getPintypeidPinType()) {
+                   case Pintype.PRIVATE:
+                       other.setImageResource(R.drawable.title_layout_p);
+                       break;
+                   case Pintype.WORK:
+                       other.setImageResource(R.drawable.title_layout_w);
+                       break;
+                   case Pintype.STUDIO:
+                       other.setImageResource(R.drawable.title_layout_r);
+                       break;
+                   case Pintype.MONUMENT:
+                       other.setImageResource(R.drawable.title_layout_m);
+                       break;
+                   case Pintype.VENUE:
+                       other.setImageResource(R.drawable.title_layout_v);
+                       break;
+                   case Pintype.LOTM:
+                       other.setImageResource(R.drawable.title_layout_l);
+                       break;
+                   default:
+                       other.setBackgroundResource(R.color.colorPrimary);
+                       break;
+               }
+               pintype_layout.addView(other);
+           }
        }
        loader.setVisibility(View.VISIBLE);
        pin_fragment_image.setVisibility(View.VISIBLE);
        final ProgressBar progressView = loader;
+
        Picasso.with(view)
                .load(pin.getImageUrl(view))
                .into(pin_fragment_image, new Callback() {
@@ -218,7 +263,7 @@ public class PinInfoSlidedPanel {
         protected Void doInBackground(Void... params) {
             try {
                 final Pin ret = PinsCallback.getInstance().get_other_info(pin.getIdPin());
-
+                if(ret==null) return null;
                 view.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -300,27 +345,81 @@ public class PinInfoSlidedPanel {
             //3) songs: get the songs id from the pin; show the songs in the songs textview
             //relation: pinhassongs
             //then use relation songhasmediatype to put the right link on the individual songs
+            lyrics_textview_horizontal_layout.setVisibility(View.GONE);
             List<Song> songs=ret.getSongDTOList();
+            List<ClickableSpan> clickableSpanList=new ArrayList<>();
+            final List<String> titleList = new ArrayList<>();
             if (songs != null && !(songs.isEmpty())) {
                 String listSong="";
                 String listLyrics="";
+
                 for(Song song:songs){
+                   titleList.add(song.getTitle()+"("+song.getAlbumidAlbum().getName()+")");
+
+                    Lyrics lyrics=song.getLyricsidLyrics();
+                    if(lyrics!=null){
+                        if(lyrics.getLyrics().trim()!="-"){
+
+                        }
+                        else if(lyrics.getUrlLirics().trim()!="-"){
+
+                        }
+
+                    }
+
                     listSong+=song.getTitle()+"("+song.getAlbumidAlbum().getName()+"), ";
-
-
 
                 }
 
                 if(listSong.length()>0) listSong = listSong.substring(0, listSong.length() - 2);
 
+                SpannableString ss = new SpannableString(listSong);
+
+               /*
+                ClickableSpan span1 = new ClickableSpan() {
+                    @Override
+                    public void onClick(View textView) {
+                        // do some thing
+                    }
+                };
+
+                ClickableSpan span2 = new ClickableSpan() {
+                    @Override
+                    public void onClick(View textView) {
+                        // do another thing
+                    }
+                };*/
+                int start=0, end=0;
+                for(final String t:titleList){
+                    Log.wtf("span",t);
+                    ClickableSpan span = new ClickableSpan() {
+                        @Override
+                        public void onClick(View textView) {
+                            Log.wtf("span",t);
+                        }
+                    };
+
+                    end+=t.length();
+                    Log.wtf("span",""+end);
+                    Log.wtf("span",""+start);
+                    ss.setSpan(span, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    end+=2; //for the ',' and ' ' character
+                    start=end;
+                }
+
+
+
+
                 songs_textview_horizontal_layout.setVisibility(View.VISIBLE);
-                songs_textview.setText(listSong);
+                songs_textview.setText(ss);
+                songs_textview.setMovementMethod(LinkMovementMethod.getInstance());
+                //songs_textview.setText(listSong);
             }
             else {
                 songs_textview_horizontal_layout.setVisibility(View.GONE);
             }
 
-
+/*
             //4) lyrics: if present, get the lyrics id and show preview in the textview, plus link to the site
             //relation: songhaslyrics
             Lyrics lyrics =new Lyrics();
@@ -330,7 +429,7 @@ public class PinInfoSlidedPanel {
             }
             else {
                 lyrics_textview_horizontal_layout.setVisibility(View.GONE);
-            }
+            }*/
 
             //5) albums: if present, get the albums and show the names in the textview, plus link if they have mediatype
             //relations: pinhasalbum, albumhasmediatype
