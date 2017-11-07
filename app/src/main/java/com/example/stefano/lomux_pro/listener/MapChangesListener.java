@@ -1,6 +1,7 @@
 package com.example.stefano.lomux_pro.listener;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import com.example.stefano.lomux_pro.LomuxMapActivity;
@@ -45,11 +46,13 @@ public class MapChangesListener implements GoogleMap.OnCameraIdleListener{
         else
         {
             //the actual visible area is bigger than before or the user has moved the map, need to refresh
+            //and there aren't pendent call
             actualMaxVisibleArea = updateBounds;
             apply_bounds();
             PinsCallback.getInstance().get_local_pins(mMap, actualMaxVisibleArea, context.getListIds(), context);
             Log.d("Camera","UPDATE");
         }
+
 
     }
 

@@ -218,13 +218,11 @@ public class PinInfoSlidedPanel {
         protected Void doInBackground(Void... params) {
             try {
                 final Pin ret = PinsCallback.getInstance().get_other_info(pin.getIdPin());
-                final List<Song> songs = PinsCallback.getInstance().getSongsByPin(ret.getIdPin());
-                final List<Artist> artists = PinsCallback.getInstance().getArtistsByPin(ret.getIdPin());
-                final List<Album> albums = PinsCallback.getInstance().getAlbumsByPin(ret.getIdPin());
+
                 view.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        complete_info(ret, songs, artists, albums);
+                        complete_info(ret);
 
                     }
                 });
@@ -247,7 +245,7 @@ public class PinInfoSlidedPanel {
 
 
 
-        private void complete_info(Pin ret, List<Song> songs, List<Artist> artists, List<Album> albums ){
+        private void complete_info(Pin ret ){
 
             //1) Address: geolocation from the lat-long, and address inside address_textview
             Geocoder geocoder = new Geocoder(view, Locale.getDefault());
@@ -282,6 +280,7 @@ public class PinInfoSlidedPanel {
 
             //2) artists: get the artists from the pin; show them in the artists textview
             //relation: pinhasartist
+            List<Artist> artists=ret.getArtistDTOList();
             if (artists != null && !(artists.isEmpty())) {
                 String listArtist="";
                 for(Artist artist:artists){
@@ -301,7 +300,7 @@ public class PinInfoSlidedPanel {
             //3) songs: get the songs id from the pin; show the songs in the songs textview
             //relation: pinhassongs
             //then use relation songhasmediatype to put the right link on the individual songs
-
+            List<Song> songs=ret.getSongDTOList();
             if (songs != null && !(songs.isEmpty())) {
                 String listSong="";
                 String listLyrics="";
@@ -335,7 +334,7 @@ public class PinInfoSlidedPanel {
 
             //5) albums: if present, get the albums and show the names in the textview, plus link if they have mediatype
             //relations: pinhasalbum, albumhasmediatype
-
+            List<Album> albums = ret.getAlbumDTOList();
             if (albums != null && !(albums.isEmpty())) {
                 String listAlbum ="";
                 for(Album album:albums){

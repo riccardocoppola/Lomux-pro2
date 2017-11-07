@@ -39,6 +39,7 @@ public class PinRenderer extends DefaultClusterRenderer<Pin> {
        for(PinHasPintype pinHasPintype:curPin.getPinHasPintypeDTOList()){
            if(pinHasPintype.getIsprincipal()==1){
                pintype=pinHasPintype.getPinHasPintypeDTOPK().getPintypeidPinType();
+               break;
            }
        }
        switch (pintype) {
