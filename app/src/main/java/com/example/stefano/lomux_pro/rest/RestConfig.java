@@ -18,7 +18,7 @@ public class RestConfig {
     }
     private RestConfig() {
         Retrofit retrofit = new Retrofit.Builder()
-               .baseUrl("http://lomux-webapp-lomux.193b.starter-ca-central-1.openshiftapps.com/rest/")
+               .baseUrl("https://lomux-webapp-lomux.193b.starter-ca-central-1.openshiftapps.com/rest/")
                // .baseUrl("http://192.168.169.3:8080/lomux_webapp/rest/") //per provare in locale
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();

@@ -52,8 +52,10 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import static android.content.ContentValues.TAG;
 import static java.security.AccessController.getContext;
@@ -347,26 +349,31 @@ public class PinInfoSlidedPanel {
             //then use relation songhasmediatype to put the right link on the individual songs
             lyrics_textview_horizontal_layout.setVisibility(View.GONE);
             List<Song> songs=ret.getSongDTOList();
-            List<ClickableSpan> clickableSpanList=new ArrayList<>();
-            final List<String> titleList = new ArrayList<>();
+            Map<String,ClickableSpan> map=new HashMap<>();
+           // final List<String> titleList = new ArrayList<>();
             if (songs != null && !(songs.isEmpty())) {
                 String listSong="";
                 String listLyrics="";
 
                 for(Song song:songs){
-                   titleList.add(song.getTitle()+"("+song.getAlbumidAlbum().getName()+")");
+                   //titleList.add();
+                    String title=song.getTitle()+"("+song.getAlbumidAlbum().getName()+")";
 
-                    Lyrics lyrics=song.getLyricsidLyrics();
-                    if(lyrics!=null){
-                        if(lyrics.getLyrics().trim()!="-"){
-
-                        }
-                        else if(lyrics.getUrlLirics().trim()!="-"){
-
-                        }
+                    List<SongHasMediatype> songHasMediatype=song.getSongHasMediatypeDTOList();
+                    if(!songHasMediatype.isEmpty()&&songHasMediatype.get(0).getSongHasMediatypeDTOPK().getMediatypeidMediaType()!=1){
+                        //add a span
+                        ClickableSpan span = new ClickableSpan() {
+                            @Override
+                            public void onClick(View textView) {
+                                //menage when click on link
+                            }
+                        };
+                        map.put(title,span);
 
                     }
-
+                    else{
+                        map.put(title,null);
+                    }
                     listSong+=song.getTitle()+"("+song.getAlbumidAlbum().getName()+"), ";
 
                 }
@@ -375,34 +382,13 @@ public class PinInfoSlidedPanel {
 
                 SpannableString ss = new SpannableString(listSong);
 
-               /*
-                ClickableSpan span1 = new ClickableSpan() {
-                    @Override
-                    public void onClick(View textView) {
-                        // do some thing
-                    }
-                };
-
-                ClickableSpan span2 = new ClickableSpan() {
-                    @Override
-                    public void onClick(View textView) {
-                        // do another thing
-                    }
-                };*/
                 int start=0, end=0;
-                for(final String t:titleList){
-                    Log.wtf("span",t);
-                    ClickableSpan span = new ClickableSpan() {
-                        @Override
-                        public void onClick(View textView) {
-                            Log.wtf("span",t);
-                        }
-                    };
+                for( Map.Entry<String,ClickableSpan> t:map.entrySet()){
 
-                    end+=t.length();
-                    Log.wtf("span",""+end);
-                    Log.wtf("span",""+start);
-                    ss.setSpan(span, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    end+=t.getKey().length();
+                    if(t.getValue()!=null)
+                         ss.setSpan(t.getValue(), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
                     end+=2; //for the ',' and ' ' character
                     start=end;
                 }
