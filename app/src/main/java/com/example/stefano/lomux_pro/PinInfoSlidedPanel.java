@@ -1,5 +1,6 @@
 package com.example.stefano.lomux_pro;
 
+import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -11,6 +12,10 @@ import android.provider.SyncStateContract;
 import android.support.annotation.UiThread;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.view.menu.MenuBuilder;
+
+import android.support.v7.view.menu.MenuPopupHelper;
+import android.support.v7.widget.PopupMenu;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -20,14 +25,19 @@ import android.text.style.ClickableSpan;
 import android.text.style.StyleSpan;
 import android.text.style.UnderlineSpan;
 import android.util.Log;
+//import android.view.Menu;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+//import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.net.Uri;
+import android.widget.Toast;
 
 import com.example.stefano.lomux_pro.callbacks.PinsCallback;
 import com.example.stefano.lomux_pro.callbacks.SongCallback;
@@ -310,7 +320,7 @@ public class PinInfoSlidedPanel {
             }
 
 
-            if (addresses.size() != 0 && addresses != null) {
+            if (addresses != null && addresses.size() != 0 ) {
                address_textview_horizontal_layout.setVisibility(View.VISIBLE);
                Address address = addresses.get(0);
                String[] address_parts = address.getAddressLine(0).split(",");
@@ -357,15 +367,57 @@ public class PinInfoSlidedPanel {
 
                 for(Song song:songs){
                    //titleList.add();
-                    String title=song.getTitle()+"("+song.getAlbumidAlbum().getName()+")";
+                    final String title=song.getTitle()+"("+song.getAlbumidAlbum().getName()+")";
 
-                    List<SongHasMediatype> songHasMediatype=song.getSongHasMediatypeDTOList();
+                    final List<SongHasMediatype> songHasMediatype=song.getSongHasMediatypeDTOList();
                     if(!songHasMediatype.isEmpty()&&songHasMediatype.get(0).getSongHasMediatypeDTOPK().getMediatypeidMediaType()!=1){
                         //add a span
                         ClickableSpan span = new ClickableSpan() {
                             @Override
                             public void onClick(View textView) {
                                 //menage when click on link
+                                //Creating the instance of PopupMenu
+                                PopupMenu popup = new PopupMenu(view, songs_textview);
+                                //Inflating the Popup using xml file
+
+                                //if(songHasMediatype.get(0).getSongHasMediatypeDTOPK().getMediatypeidMediaType()==2)
+                                Menu menu=popup.getMenu();
+                                popup.getMenuInflater().inflate(R.menu.popup_menu, menu);
+                                final String youtube_link, spotify_uri;
+                                String temp_youtube=null,temp_spotify=null;
+                                for(SongHasMediatype s:songHasMediatype){
+                                    if(s.getSongHasMediatypeDTOPK().getMediatypeidMediaType()==2){
+                                        menu.getItem(0).setVisible(true);
+                                        temp_youtube=s.getUrlMedia();
+                                    }
+                                    if(s.getSongHasMediatypeDTOPK().getMediatypeidMediaType()==3){
+                                        menu.getItem(1).setVisible(true);
+                                        temp_spotify=s.getUrlMedia();
+                                    }
+
+                                }
+                                if(temp_spotify!=null) spotify_uri=temp_spotify;
+                                else spotify_uri=null;
+                                if(temp_youtube!=null) youtube_link=temp_youtube;
+                                else youtube_link=null;
+
+
+                                //registering popup with OnMenuItemClickListener
+                                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                                    public boolean onMenuItemClick(MenuItem item) {
+                                        if(item.getTitle().equals("Youtube"))
+                                            youtube_click(youtube_link);
+                                        if(item.getTitle().equals("Spotify"))
+                                            spotify_click(spotify_uri);
+                                        return true;
+                                    }
+                                });
+
+                                MenuPopupHelper menuHelper = new MenuPopupHelper(view, (MenuBuilder) menu, songs_textview);
+                                menuHelper.setForceShowIcon(true);
+                                menuHelper.show();
+                                //popup.show();//showing popup menu
+                                menuHelper.show();
                             }
                         };
                         map.put(title,span);
@@ -529,6 +581,31 @@ public class PinInfoSlidedPanel {
             //retrieve address from pins//address_textview.setText(ret.getAddress());
 
           }
+
+        private void youtube_click(String youtubeLink){
+            SlidingUpPanelLayout slidingUpPanelLayout = view.findViewById(R.id.sliding_layout_youtube);
+            view.getSupportFragmentManager().beginTransaction()
+                    .add(R.id.youtube_fragment, new YoutubeFragment(slidingUpPanelLayout,youtubeLink), "info").commit();
+        }
+
+
+        private void spotify_click(String spotifyUri){
+            if(isPackageInstalled("com.spotify.music",view.getApplicationContext().getPackageManager())) {
+
+
+                                    Intent spotifyIntent = new Intent(Intent.ACTION_VIEW);
+                                    spotifyIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    spotifyIntent.setPackage("com.spotify.music");
+                                    spotifyIntent.setData(Uri.parse(spotifyUri));
+                                    view.getApplicationContext().startActivity(spotifyIntent);
+                               }
+                                else{
+                                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    intent.setData(Uri.parse("https://play.google.com/store/apps/details?id=com.spotify.music"));
+                                    view.getApplicationContext().startActivity(intent);
+                                }
+        }
 
 
         private boolean isPackageInstalled(String packagename, PackageManager packageManager) {
