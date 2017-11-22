@@ -37,6 +37,8 @@ public class MapChangesListener implements GoogleMap.OnCameraIdleListener{
     @Override
     public void onCameraIdle() {
         LatLngBounds updateBounds = mMap.getProjection().getVisibleRegion().latLngBounds;
+        // Log.d("ZOOM_LEVEL", Float.toString(mMap.getCameraPosition().zoom));
+        // zoom level = to 6.60 for counter mode
         if(actualMaxVisibleArea.contains(updateBounds.northeast)
                 && actualMaxVisibleArea.contains(updateBounds.southwest)){
             // the actual visible area is smaller than before, so it not need to call the database

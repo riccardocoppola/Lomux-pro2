@@ -65,13 +65,13 @@ public class YoutubeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.you_tube_api, container, false);
 
-        back = (TextView) rootView.findViewById(R.id.youtube_fragment_back);
-        back.setOnClickListener(new View.OnClickListener() {
+        //back = (TextView) rootView.findViewById(R.id.youtube_fragment_back);
+      /*  back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 youtubeBackListener.onYoutubeBack();
             }
-        });
+        }); */
 
 
         YouTubePlayerSupportFragment youTubePlayerFragment = YouTubePlayerSupportFragment.newInstance();

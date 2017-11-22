@@ -337,9 +337,9 @@
 
     </android.support.constraint.ConstraintLayout>
 
-    <include
+<!--    <include
         layout="@layout/you_tube_api"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content" /> -->
 
 </com.sothree.slidinguppanel.SlidingUpPanelLayout>

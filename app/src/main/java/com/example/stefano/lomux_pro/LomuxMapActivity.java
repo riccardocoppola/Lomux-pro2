@@ -205,8 +205,16 @@ public class LomuxMapActivity extends FragmentActivity implements OnMapReadyCall
         else if(searchView.getVisibility()==View.VISIBLE){
             onMapClick(mMap.getCameraPosition().target);
         }
-        else if (slidingUpPanelLayout.getPanelState()== SlidingUpPanelLayout.PanelState.EXPANDED)
+        else if (slidingUpPanelLayout.getPanelState()== SlidingUpPanelLayout.PanelState.EXPANDED) {
+            // if PinInfoSlider is open
+            // check if youtube is playing
+            SlidingUpPanelLayout youtubePlayerSlider = findViewById(R.id.sliding_layout_youtube);
+            if (youtubePlayerSlider.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED)
+                youtubePlayerSlider.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
+            else
                 slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+
+        }
         else if(slidingUpPanelLayout.getPanelState()== SlidingUpPanelLayout.PanelState.COLLAPSED)
                 slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
 
@@ -218,6 +226,7 @@ public class LomuxMapActivity extends FragmentActivity implements OnMapReadyCall
 
     @Override
     public void onYoutubeBack() {
+
         Log.d("BACK","BACK");
     }
 }
