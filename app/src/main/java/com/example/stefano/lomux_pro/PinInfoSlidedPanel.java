@@ -583,9 +583,10 @@ public class PinInfoSlidedPanel {
           }
 
         private void youtube_click(String youtubeLink){
-            SlidingUpPanelLayout slidingUpPanelLayout = view.findViewById(R.id.sliding_layout_youtube);
+            SlidingUpPanelLayout youtubeSlider = view.findViewById(R.id.sliding_layout_youtube);
+            SlidingUpPanelLayout pinInfoSlider = view.findViewById(R.id.sliding_layout);
             view.getSupportFragmentManager().beginTransaction()
-                    .add(R.id.youtube_fragment, new YoutubeFragment(slidingUpPanelLayout,youtubeLink), "info").commit();
+                    .add(R.id.youtube_fragment, new YoutubeFragment(youtubeSlider, pinInfoSlider,youtubeLink), "info").commit();
         }
 
 
