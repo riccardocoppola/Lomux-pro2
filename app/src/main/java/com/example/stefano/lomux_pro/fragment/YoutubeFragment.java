@@ -31,7 +31,8 @@ public class YoutubeFragment extends Fragment {
 
     private OnYoutubeBackListener youtubeBackListener;
     private TextView back;
-    private SlidingUpPanelLayout slidingUpPanelLayout;
+    private SlidingUpPanelLayout youtubeSlider;
+    private SlidingUpPanelLayout pinInfoSlider;
     private String url;
 
     public interface OnYoutubeBackListener {
@@ -39,8 +40,9 @@ public class YoutubeFragment extends Fragment {
         public void onYoutubeBack();
     }
 
-    public YoutubeFragment(SlidingUpPanelLayout slidingUpPanelLayout, String url){
-        this.slidingUpPanelLayout = slidingUpPanelLayout;
+    public YoutubeFragment(SlidingUpPanelLayout youtubeSlider, SlidingUpPanelLayout pinInfoSlider, String url){
+        this.youtubeSlider = youtubeSlider;
+        this.pinInfoSlider = pinInfoSlider;
         this.url = url;
 
     }
@@ -86,11 +88,11 @@ public class YoutubeFragment extends Fragment {
             public void onInitializationSuccess(Provider provider, YouTubePlayer player, boolean wasRestored) {
                 if (!wasRestored) {
                     player.setPlayerStyle(YouTubePlayer.PlayerStyle.DEFAULT);
+                    player.setShowFullscreenButton(false);
                     player.loadVideo(url);
                     player.play();
-                    slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
-
-
+                    youtubeSlider.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
+                    
                 }
             }
 
