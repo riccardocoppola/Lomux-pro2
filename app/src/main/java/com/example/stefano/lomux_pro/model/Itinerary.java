@@ -1,5 +1,9 @@
 package com.example.stefano.lomux_pro.model;
 
+import android.content.Context;
+
+import com.example.stefano.lomux_pro.R;
+
 import java.util.List;
 
 /**
@@ -13,7 +17,8 @@ public class Itinerary {
 
     private String info;
 
-    private Short image;
+    private Short image; //0 = non c'è, 1 = c'è
+    //se presente cerca
 
     private List<Pin> pinDTOList;
 
@@ -43,6 +48,14 @@ public class Itinerary {
 
     public Short getImage() {
         return image;
+    }
+
+    public String getImageUrl(Context context)
+    {
+        if (image!=0)
+            return context.getString(R.string.image_path) + idItinerary + ".png";
+        else
+            return "0";
     }
 
     public void setImage(Short image) {
