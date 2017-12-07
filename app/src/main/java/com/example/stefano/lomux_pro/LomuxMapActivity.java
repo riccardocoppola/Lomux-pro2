@@ -23,6 +23,7 @@ import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.example.stefano.lomux_pro.adapters.RecyclerAdapter;
+import com.example.stefano.lomux_pro.callbacks.ItineraryCallback;
 import com.example.stefano.lomux_pro.callbacks.PinsCallback;
 import com.example.stefano.lomux_pro.fragment.YoutubeFragment;
 import com.example.stefano.lomux_pro.listener.ClusterMangerListener;
@@ -65,12 +66,14 @@ public class LomuxMapActivity extends FragmentActivity implements RecyclerAdapte
 
     //TODO
     //load di TUTTI gli itinerari a start dell'applicazione, chiamare sincrona prima di getlocalpins
-    private ArrayList<Itinerary> getItineraries() {
-        ArrayList<Itinerary> tmp_itinerary_array = new ArrayList<Itinerary>();
+    private ArrayList<Itinerary> getItineraries(List<Itinerary> itineraries) {
+        ArrayList<Itinerary> tmp_itinerary_array = new ArrayList<>(itineraries);
+
         Itinerary tmp_itinerary0 = new Itinerary();
         tmp_itinerary0.setName("a0");
         tmp_itinerary0.setInfo("bbbbbb");
-        Itinerary tmp_itinerary1 = new Itinerary();
+        tmp_itinerary_array.add(tmp_itinerary0);
+       /* Itinerary tmp_itinerary1 = new Itinerary();
         tmp_itinerary1.setName("a1");
         tmp_itinerary1.setInfo("bbbbbb");
         Itinerary tmp_itinerary2 = new Itinerary();
@@ -92,7 +95,7 @@ public class LomuxMapActivity extends FragmentActivity implements RecyclerAdapte
         tmp_itinerary_array.add(tmp_itinerary3);
         tmp_itinerary_array.add(tmp_itinerary4);
         tmp_itinerary_array.add(tmp_itinerary5);
-
+*/
         selected_itinerary="a0";
         return tmp_itinerary_array;
     }
@@ -118,13 +121,7 @@ public class LomuxMapActivity extends FragmentActivity implements RecyclerAdapte
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        //itinerary recycler view init
-        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        mLinearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        mRecyclerView.setLayoutManager(mLinearLayoutManager);
-        mAdapter = new RecyclerAdapter(getItineraries(), this);
-        mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.addOnChildAttachStateChangeListener(new ItineraryAttachListener(this));
+
 
 
     }
@@ -188,8 +185,8 @@ public class LomuxMapActivity extends FragmentActivity implements RecyclerAdapte
 
         float zoom=13.5f;
         // Add a marker in London and move the camera
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(london_center));
         mMap.moveCamera(CameraUpdateFactory.zoomTo(zoom));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(london_center));
 
         mMap.getUiSettings().setMapToolbarEnabled(false);
         mClusterManager = new ClusterManager<>(this, mMap);
@@ -216,6 +213,7 @@ public class LomuxMapActivity extends FragmentActivity implements RecyclerAdapte
         MapChangesListener mapChangesListener =new MapChangesListener(mMap,this);
         mMap.setOnCameraIdleListener(mapChangesListener);
         PinsCallback.getInstance().get_local_pins(mMap,mapChangesListener.getActualVisibleArea(),ids,this);
+        ItineraryCallback.getInstance().get_itinerary(this);
     }
 
     public void addPins(List<Pin> pins){
@@ -225,6 +223,16 @@ public class LomuxMapActivity extends FragmentActivity implements RecyclerAdapte
             mClusterManager.addItem(elem);
         }
         mClusterManager.cluster();
+    }
+
+    public void addItinerary(List<Itinerary> itineraries){
+        //itinerary recycler view init
+        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        mLinearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        mRecyclerView.setLayoutManager(mLinearLayoutManager);
+        mAdapter = new RecyclerAdapter(getItineraries(itineraries), this);
+        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.addOnChildAttachStateChangeListener(new ItineraryAttachListener(this));
     }
 
     public void clusterManagerOnCameraIdle(){
