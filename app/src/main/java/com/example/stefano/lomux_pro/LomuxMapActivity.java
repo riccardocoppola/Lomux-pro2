@@ -70,9 +70,9 @@ public class LomuxMapActivity extends FragmentActivity implements RecyclerAdapte
         ArrayList<Itinerary> tmp_itinerary_array = new ArrayList<>(itineraries);
 
         Itinerary tmp_itinerary0 = new Itinerary();
-        tmp_itinerary0.setName("a0");
-        tmp_itinerary0.setInfo("bbbbbb");
-        tmp_itinerary_array.add(tmp_itinerary0);
+        tmp_itinerary0.setName("All Pins");
+        tmp_itinerary0.setInfo("all pins");
+        tmp_itinerary_array.add(0,tmp_itinerary0);
        /* Itinerary tmp_itinerary1 = new Itinerary();
         tmp_itinerary1.setName("a1");
         tmp_itinerary1.setInfo("bbbbbb");
@@ -96,7 +96,7 @@ public class LomuxMapActivity extends FragmentActivity implements RecyclerAdapte
         tmp_itinerary_array.add(tmp_itinerary4);
         tmp_itinerary_array.add(tmp_itinerary5);
 */
-        selected_itinerary="a0";
+        selected_itinerary="All Pins";
         return tmp_itinerary_array;
     }
 
