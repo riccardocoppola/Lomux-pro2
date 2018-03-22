@@ -9,6 +9,8 @@
     tools:openDrawer="start">
 
 
+
+
     <!-- The main content view -->
     <include
         layout="@layout/activity_lomux_map_content"

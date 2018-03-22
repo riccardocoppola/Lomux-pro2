@@ -1,6 +1,10 @@
 package com.example.stefano.lomux_pro;
 
+import android.annotation.SuppressLint;
+import android.app.SearchManager;
+import android.content.ActivityNotFoundException;
 import android.content.ClipData;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -8,6 +12,7 @@ import android.graphics.Typeface;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.AsyncTask;
+import android.provider.MediaStore;
 import android.provider.SyncStateContract;
 import android.support.annotation.UiThread;
 import android.support.constraint.ConstraintLayout;
@@ -45,6 +50,7 @@ import com.example.stefano.lomux_pro.fragment.YoutubeFragment;
 import com.example.stefano.lomux_pro.listener.MediaButtonClickListener;
 import com.example.stefano.lomux_pro.listener.URIClickListener;
 import com.example.stefano.lomux_pro.model.Album;
+import com.example.stefano.lomux_pro.model.AlbumHasMediatype;
 import com.example.stefano.lomux_pro.model.Artist;
 import com.example.stefano.lomux_pro.model.Link;
 import com.example.stefano.lomux_pro.model.Lyrics;
@@ -63,9 +69,11 @@ import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TreeMap;
 
 import static android.content.ContentValues.TAG;
 import static java.security.AccessController.getContext;
@@ -359,7 +367,7 @@ public class PinInfoSlidedPanel {
             //then use relation songhasmediatype to put the right link on the individual songs
             lyrics_textview_horizontal_layout.setVisibility(View.GONE);
             List<Song> songs=ret.getSongDTOList();
-            Map<String,ClickableSpan> map=new HashMap<>();
+            Map<String,ClickableSpan> map=new LinkedHashMap<>();
            // final List<String> titleList = new ArrayList<>();
             if (songs != null && !(songs.isEmpty())) {
                 String listSong="";
@@ -373,6 +381,7 @@ public class PinInfoSlidedPanel {
                     if(!songHasMediatype.isEmpty()&&songHasMediatype.get(0).getSongHasMediatypeDTOPK().getMediatypeidMediaType()!=1){
                         //add a span
                         ClickableSpan span = new ClickableSpan() {
+                            @SuppressLint("RestrictedApi")
                             @Override
                             public void onClick(View textView) {
                                 //menage when click on link
@@ -386,6 +395,7 @@ public class PinInfoSlidedPanel {
                                 final String youtube_link, spotify_uri;
                                 String temp_youtube=null,temp_spotify=null;
                                 for(SongHasMediatype s:songHasMediatype){
+
                                     if(s.getSongHasMediatypeDTOPK().getMediatypeidMediaType()==2){
                                         menu.getItem(0).setVisible(true);
                                         temp_youtube=s.getUrlMedia();
@@ -426,6 +436,7 @@ public class PinInfoSlidedPanel {
                     else{
                         map.put(title,null);
                     }
+                    Log.d("title-1",title);
                     listSong+=song.getTitle()+"("+song.getAlbumidAlbum().getName()+"), ";
 
                 }
@@ -433,10 +444,10 @@ public class PinInfoSlidedPanel {
                 if(listSong.length()>0) listSong = listSong.substring(0, listSong.length() - 2);
 
                 SpannableString ss = new SpannableString(listSong);
-
+                Log.d("title", listSong);
                 int start=0, end=0;
                 for( Map.Entry<String,ClickableSpan> t:map.entrySet()){
-
+                    Log.d("title2",t.getKey());
                     end+=t.getKey().length();
                     if(t.getValue()!=null)
                          ss.setSpan(t.getValue(), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -471,19 +482,105 @@ public class PinInfoSlidedPanel {
 
             //5) albums: if present, get the albums and show the names in the textview, plus link if they have mediatype
             //relations: pinhasalbum, albumhasmediatype
-            List<Album> albums = ret.getAlbumDTOList();
+            List<Album> albums=ret.getAlbumDTOList();
+            Map<String,ClickableSpan> mapAlbum=new LinkedHashMap<>();
+            // final List<String> titleList = new ArrayList<>();
             if (albums != null && !(albums.isEmpty())) {
-                String listAlbum ="";
+                String listAlbum="";
+
                 for(Album album:albums){
+                    //titleList.add();
+                    final String title=album.getName()+"("+album.getYear()+")";
+
+                    final List<AlbumHasMediatype> albumHasMediatypes=album.getAlbumHasMediatypeDTOList();
+                    if(!albumHasMediatypes.isEmpty()&&albumHasMediatypes.get(0).getAlbumHasMediatypeDTOPK().getMediatypeidMediaType()!=1){
+                        //add a span
+                        ClickableSpan span = new ClickableSpan() {
+                            @SuppressLint("RestrictedApi")
+                            @Override
+                            public void onClick(View textView) {
+                                //menage when click on link
+                                //Creating the instance of PopupMenu
+                                PopupMenu popup = new PopupMenu(view, albums_textview);
+                                //Inflating the Popup using xml file
+
+                                //if(songHasMediatype.get(0).getSongHasMediatypeDTOPK().getMediatypeidMediaType()==2)
+                                Menu menu=popup.getMenu();
+                                popup.getMenuInflater().inflate(R.menu.popup_menu, menu);
+                                final String youtube_link, spotify_uri;
+                                String temp_youtube=null,temp_spotify=null;
+                                for(AlbumHasMediatype a:albumHasMediatypes){
+
+                                    if(a.getAlbumHasMediatypeDTOPK().getMediatypeidMediaType()==2){
+                                        menu.getItem(0).setVisible(true);
+                                        temp_youtube=a.getUrlMedia();
+                                    }
+                                    if(a.getAlbumHasMediatypeDTOPK().getMediatypeidMediaType()==3){
+                                        menu.getItem(1).setVisible(true);
+                                        temp_spotify=a.getUrlMedia();
+                                    }
+
+                                }
+                                if(temp_spotify!=null) spotify_uri=temp_spotify;
+                                else spotify_uri=null;
+                                if(temp_youtube!=null) youtube_link=temp_youtube;
+                                else youtube_link=null;
+
+
+                                //registering popup with OnMenuItemClickListener
+                                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                                    public boolean onMenuItemClick(MenuItem item) {
+                                        if(item.getTitle().equals("Youtube"))
+                                            youtube_click(youtube_link);
+                                        if(item.getTitle().equals("Spotify"))
+                                            spotify_click(spotify_uri);
+                                        return true;
+                                    }
+                                });
+
+                                MenuPopupHelper menuHelper = new MenuPopupHelper(view, (MenuBuilder) menu, albums_textview);
+                                menuHelper.setForceShowIcon(true);
+                                menuHelper.show();
+                                //popup.show();//showing popup menu
+                                menuHelper.show();
+                            }
+                        };
+                        mapAlbum.put(title,span);
+
+                    }
+                    else{
+                        mapAlbum.put(title,null);
+                    }
+                    Log.d("title-1",title);
                     listAlbum+=album.getName()+"("+album.getYear()+"), ";
+
                 }
-                if(listAlbum.length()>0) listAlbum=listAlbum.substring(0, listAlbum.length()-2);
+
+                if(listAlbum.length()>0) listAlbum= listAlbum.substring(0, listAlbum.length() - 2);
+
+                SpannableString ss = new SpannableString(listAlbum);
+                Log.d("title", listAlbum);
+                int start=0, end=0;
+                for( Map.Entry<String,ClickableSpan> t:mapAlbum.entrySet()){
+                    Log.d("title2",t.getKey());
+                    end+=t.getKey().length();
+                    if(t.getValue()!=null)
+                        ss.setSpan(t.getValue(), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                    end+=2; //for the ',' and ' ' character
+                    start=end;
+                }
+
+
+
 
                 albums_textview_horizontal_layout.setVisibility(View.VISIBLE);
-                albums_textview.setText(listAlbum);
+                albums_textview.setText(ss);
+                albums_textview.setMovementMethod(LinkMovementMethod.getInstance());
+                //songs_textview.setText(listSong);
             }
             else {
-                albums_textview_horizontal_layout.setVisibility(View.GONE);
+                songs_textview_horizontal_layout.setVisibility(View.GONE);
             }
 
 
@@ -594,11 +691,20 @@ public class PinInfoSlidedPanel {
             if(isPackageInstalled("com.spotify.music",view.getApplicationContext().getPackageManager())) {
 
 
-                                    Intent spotifyIntent = new Intent(Intent.ACTION_VIEW);
-                                    spotifyIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                    spotifyIntent.setPackage("com.spotify.music");
-                                    spotifyIntent.setData(Uri.parse(spotifyUri));
-                                    view.getApplicationContext().startActivity(spotifyIntent);
+
+
+                try {
+                    final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(spotifyUri));
+                    intent.setPackage("com.spotify.music");
+                    //intent.setAction(MediaStore.INTENT_ACTION_MEDIA_PLAY_FROM_SEARCH);
+                    //intent.putExtra(SearchManager.QUERY, " sd" );
+                    // spotifyIntent.setData(Uri.parse(spotifyUri)); doesn't work
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    view.startActivity(intent);
+                } catch ( ActivityNotFoundException e ) {
+                    //do action if the uri is not correct
+
+                }
                                }
                                 else{
                                     Intent intent = new Intent(Intent.ACTION_VIEW);

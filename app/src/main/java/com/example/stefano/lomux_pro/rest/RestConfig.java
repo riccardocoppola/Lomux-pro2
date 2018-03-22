@@ -3,6 +3,8 @@ package com.example.stefano.lomux_pro.rest;
 /**
  * Created by FrancescoMargiotta on 18/07/2017.
  */
+import com.example.stefano.lomux_pro.model.Itinerary;
+
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -10,6 +12,7 @@ public class RestConfig {
 
     private static RestConfig ourInstance=null;
     private PinClient pinClient;
+    private ItineraryClient itineraryClient;
 
     public static RestConfig getInstance() {
         if(ourInstance==null)
@@ -24,11 +27,15 @@ public class RestConfig {
                 .build();
 
         pinClient = retrofit.create(PinClient.class);
+        itineraryClient=retrofit.create(ItineraryClient.class);
     }
 
 
     public PinClient getPinClient() {
         return pinClient;
+    }
+    public ItineraryClient getItineraryClient() {
+        return itineraryClient;
     }
 
 

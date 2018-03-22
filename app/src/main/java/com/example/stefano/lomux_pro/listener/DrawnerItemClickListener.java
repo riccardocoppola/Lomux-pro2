@@ -36,7 +36,7 @@ public class DrawnerItemClickListener implements  NavigationView.OnNavigationIte
 
     public DrawnerItemClickListener(LomuxMapActivity view) {
         this.view = view;
-        this.searchView = view.findViewById(R.id.searchbar);
+        //this.searchView = view.findViewById(R.id.searchbar);
     }
 
     /**

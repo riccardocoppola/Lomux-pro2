@@ -2,5 +2,5 @@
     <string name="app_name">Lomux-pro</string>
     <string name="title_activity_lomux_map">Map</string>
     <string name="image_path">https://test-db-lomux.000webhostapp.com/thumbnail/</string>
-    <string name="YOUTUBE_API_KEY">AIzaSyDyQ4VecF0EhVMxHPORdKzNNOh3jRYZUEY</string>
+    <string name="image_path_itinerary">https://test-db-lomux.000webhostapp.com/thumbnail/it/</string>
 </resources>
