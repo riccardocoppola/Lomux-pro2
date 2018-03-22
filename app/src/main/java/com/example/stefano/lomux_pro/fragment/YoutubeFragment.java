@@ -2,19 +2,17 @@ package com.example.stefano.lomux_pro.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.stefano.lomux_pro.R;
-import com.example.stefano.lomux_pro.listener.YoutubeListener;
+import com.example.stefano.lomux_pro.listener.YoutubeInitializationListener;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayer.OnInitializedListener;
@@ -65,7 +63,7 @@ public class YoutubeFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.you_tube_api, container, false);
+        View rootView = inflater.inflate(R.layout.pin_info_slide3, container, false);
 
         //back = (TextView) rootView.findViewById(R.id.youtube_fragment_back);
       /*  back.setOnClickListener(new View.OnClickListener() {
@@ -76,35 +74,15 @@ public class YoutubeFragment extends Fragment {
         }); */
 
 
-        YouTubePlayerSupportFragment youTubePlayerFragment = YouTubePlayerSupportFragment.newInstance();
+        final YouTubePlayerSupportFragment youTubePlayerFragment = YouTubePlayerSupportFragment.newInstance();
 
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-        transaction.add(R.id.youtube_fragment, youTubePlayerFragment).commit();
+        transaction.add(R.id.youtube_fragment, youTubePlayerFragment).commitNow();
 
-
-        youTubePlayerFragment.initialize(API_KEY, new OnInitializedListener() {
-
-            @Override
-            public void onInitializationSuccess(Provider provider, YouTubePlayer player, boolean wasRestored) {
-                if (!wasRestored) {
-                    player.setPlayerStyle(YouTubePlayer.PlayerStyle.DEFAULT);
-                    player.setShowFullscreenButton(false);
-                    player.loadVideo(url);
-                    player.play();
-                    youtubeSlider.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
-                    
-                }
-            }
-
-            
-            @Override
-            public void onInitializationFailure(Provider provider, YouTubeInitializationResult error) {
-                // YouTube error
-                String errorMessage = error.toString();
-                Toast.makeText(getActivity(), errorMessage, Toast.LENGTH_LONG).show();
-                Log.d("errorMessage:", errorMessage);
-            }
-        });
+        // TODO calculate height
+       // final float youtubePlayerHeight = this.getView().getLayoutParams().height;
+        youTubePlayerFragment.initialize(API_KEY,
+                new YoutubeInitializationListener(youtubeSlider, url, getActivity()));
 
         return rootView;
     }
