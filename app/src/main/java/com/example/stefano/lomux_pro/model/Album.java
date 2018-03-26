@@ -11,7 +11,7 @@ public class Album {
     private String name;
     private String year;
     private List<Artist> artistDTOList;
-    private List<Pin> pinDTOList;
+    private List<Pinnable> pinDTOList;
     private List<Song> songDTOList;
     private List<AlbumHasMediatype> albumHasMediatypeDTOList;
 
@@ -47,11 +47,11 @@ public class Album {
         this.artistDTOList = artistDTOList;
     }
 
-    public List<Pin> getPinDTOList() {
+    public List<Pinnable> getPinDTOList() {
         return pinDTOList;
     }
 
-    public void setPinDTOList(List<Pin> pinDTOList) {
+    public void setPinDTOList(List<Pinnable> pinDTOList) {
         this.pinDTOList = pinDTOList;
     }
 

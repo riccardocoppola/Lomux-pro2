@@ -12,7 +12,7 @@ public class Artist {
 
     private String name;
 
-    private List<Pin> pinDTOList;
+    private List<Pinnable> pinDTOList;
     private List<Album> albumDTOList;
 
     private List<Song> songDTOList;

@@ -10,7 +10,7 @@ public class Song {
     private Integer idSong;
     private String title;
     private List<Artist> artistDTOList;
-    private List<Pin> pinDTOList;
+    private List<Pinnable> pinDTOList;
     private Album albumidAlbum;
     private Lyrics lyricsidLyrics;
     private List<SongHasMediatype> songHasMediatypeDTOList;
@@ -39,11 +39,11 @@ public class Song {
         this.artistDTOList = artistDTOList;
     }
 
-    public List<Pin> getPinDTOList() {
+    public List<Pinnable> getPinDTOList() {
         return pinDTOList;
     }
 
-    public void setPinDTOList(List<Pin> pinDTOList) {
+    public void setPinDTOList(List<Pinnable> pinDTOList) {
         this.pinDTOList = pinDTOList;
     }
 

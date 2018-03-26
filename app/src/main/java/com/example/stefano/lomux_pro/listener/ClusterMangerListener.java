@@ -1,32 +1,26 @@
 package com.example.stefano.lomux_pro.listener;
 
-import android.content.Context;
 import android.util.Log;
 import android.view.View;
 
 import com.example.stefano.lomux_pro.LomuxMapActivity;
 import com.example.stefano.lomux_pro.PinInfoSlidedPanel;
 import com.example.stefano.lomux_pro.PinRenderer;
-import com.example.stefano.lomux_pro.model.Pin;
+import com.example.stefano.lomux_pro.model.Pinnable;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterItem;
 import com.google.maps.android.clustering.ClusterManager;
-import com.google.maps.android.clustering.view.ClusterRenderer;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
-
-import java.util.Map;
-import java.util.concurrent.Executors;
 
 /**
  * Created by Stefano on 18/10/2017.
  */
 
-public class ClusterMangerListener implements GoogleMap.OnMarkerClickListener, ClusterManager.OnClusterClickListener<Pin> {
+public class ClusterMangerListener implements GoogleMap.OnMarkerClickListener, ClusterManager.OnClusterClickListener<Pinnable> {
 
     ClusterManager clusterManager;
     PinRenderer pinRenderer;
@@ -34,7 +28,7 @@ public class ClusterMangerListener implements GoogleMap.OnMarkerClickListener, C
     LomuxMapActivity view;
     GoogleMap map;
 
-    public ClusterMangerListener(ClusterManager<Pin> clusterManager, PinRenderer pinRenderer, SlidingUpPanelLayout slidingUpPanelLayout, LomuxMapActivity view, GoogleMap map) {
+    public ClusterMangerListener(ClusterManager<Pinnable> clusterManager, PinRenderer pinRenderer, SlidingUpPanelLayout slidingUpPanelLayout, LomuxMapActivity view, GoogleMap map) {
         this.clusterManager = clusterManager;
         this.pinRenderer = pinRenderer;
         this.slidingUpPanelLayout = slidingUpPanelLayout;
@@ -44,7 +38,7 @@ public class ClusterMangerListener implements GoogleMap.OnMarkerClickListener, C
 
     @Override
     public boolean onMarkerClick(Marker marker) {
-        Pin pin = pinRenderer.getClusterItem(marker);
+        Pinnable pin = pinRenderer.getClusterItem(marker);
         if(pin!=null) {
             return onClusterItemClick(marker, pin);
         }
@@ -54,7 +48,7 @@ public class ClusterMangerListener implements GoogleMap.OnMarkerClickListener, C
     }
 
 
-    public boolean onClusterItemClick(final Marker marker, final Pin pin) {
+    public boolean onClusterItemClick(final Marker marker, final Pinnable pin) {
 
         final PinInfoSlidedPanel pinInfoSlidedPanel = new PinInfoSlidedPanel(view, pin);
         pinInfoSlidedPanel.setTitle();
@@ -87,7 +81,7 @@ public class ClusterMangerListener implements GoogleMap.OnMarkerClickListener, C
     }
 
     @Override
-    public boolean onClusterClick(Cluster<Pin> cluster) {
+    public boolean onClusterClick(Cluster<Pinnable> cluster) {
 //        map.animateCamera(CameraUpdateFactory.newLatLngZoom(
 //                cluster.getPosition(), (float) Math.floor(map
 //                        .getCameraPosition().zoom + 1)), 300,

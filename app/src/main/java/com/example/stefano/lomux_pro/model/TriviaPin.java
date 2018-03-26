@@ -6,7 +6,7 @@ import java.util.List;
  * Created by Franc on 23/03/2018.
  */
 
-public class TriviaPin implements Pin
+public class TriviaPin extends Pin
 {
     private Trivia trivia;
 

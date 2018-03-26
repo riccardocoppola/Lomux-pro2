@@ -1,21 +1,14 @@
 package com.example.stefano.lomux_pro.callbacks;
 
-import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
-import android.text.Layout;
 import android.util.Log;
-import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.stefano.lomux_pro.LomuxMapActivity;
 import com.example.stefano.lomux_pro.model.Album;
 import com.example.stefano.lomux_pro.model.Artist;
-import com.example.stefano.lomux_pro.model.Pin;
-import com.example.stefano.lomux_pro.model.PinHasPintype;
-import com.example.stefano.lomux_pro.model.Pintype;
+import com.example.stefano.lomux_pro.model.Pinnable;
 import com.example.stefano.lomux_pro.model.Song;
 import com.example.stefano.lomux_pro.rest.RestConfig;
 import com.google.android.gms.maps.GoogleMap;
@@ -23,8 +16,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 
 import java.io.IOException;
-import java.net.SocketTimeoutException;
-import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -37,7 +28,7 @@ import retrofit2.Response;
 
 public class PinsCallback {
     private static PinsCallback pinsCallback = null;
-    private Call<List<Pin>> call;
+    private Call<List<Pinnable>> call;
 
 
     public static PinsCallback getInstance() {
@@ -47,7 +38,7 @@ public class PinsCallback {
 
     }
 
-    public Call<List<Pin>> getCall() {
+    public Call<List<Pinnable>> getCall() {
         return call;
     }
 
@@ -56,11 +47,11 @@ public class PinsCallback {
         LatLng n_e = maxArea.northeast;
         LatLng s_w = maxArea.southwest;
         call = RestConfig.getInstance().getPinClient().getLocalPins(n_e.latitude, n_e.longitude, s_w.latitude, s_w.longitude, ids);
-        call.enqueue(new Callback<List<Pin>>() {
+        call.enqueue(new Callback<List<Pinnable>>() {
 
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
-            public void onResponse(Call<List<Pin>> call, Response<List<Pin>> response) {
+            public void onResponse(Call<List<Pinnable>> call, Response<List<Pinnable>> response) {
 
                 if (response.isSuccessful()&&response.body()!=null) {
 
@@ -72,7 +63,7 @@ public class PinsCallback {
             }
 
             @Override
-            public void onFailure(Call<List<Pin>> call, Throwable t) {
+            public void onFailure(Call<List<Pinnable>> call, Throwable t) {
                 context.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -87,10 +78,10 @@ public class PinsCallback {
         }
 
 
-    public Pin get_other_info(String pinId) throws IOException {
+    public Pinnable get_other_info(String pinId) throws IOException {
 
-        Call<Pin> call = RestConfig.getInstance().getPinClient().getOtherInfo(pinId);
-        Pin res = call.execute().body();
+        Call<Pinnable> call = RestConfig.getInstance().getPinClient().getOtherInfo(pinId);
+        Pinnable res = call.execute().body();
         return res;
     }
 

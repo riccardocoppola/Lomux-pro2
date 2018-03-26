@@ -1,18 +1,12 @@
 package com.example.stefano.lomux_pro.listener;
 
-import android.content.Context;
-import android.os.AsyncTask;
 import android.util.Log;
 
 import com.example.stefano.lomux_pro.LomuxMapActivity;
 import com.example.stefano.lomux_pro.callbacks.PinsCallback;
-import com.example.stefano.lomux_pro.model.Pin;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Stefano on 16/10/2017.

@@ -6,7 +6,7 @@ import java.util.List;
  * Created by Franc on 22/03/2018.
  */
 
-public class EventPin implements Pin
+public class EventPin extends Pin
 {
     Event event;
 

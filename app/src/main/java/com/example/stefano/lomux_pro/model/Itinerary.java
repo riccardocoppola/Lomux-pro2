@@ -20,7 +20,7 @@ public class Itinerary {
     private Short image; //0 = non c'è, 1 = c'è
     //se presente cerca
 
-    private List<Pin> pinDTOList;
+    private List<Pinnable> pinDTOList;
 
     public int getIdItinerary() {
         return idItinerary;
@@ -62,11 +62,11 @@ public class Itinerary {
         this.image = image;
     }
 
-    public List<Pin> getPinDTOList() {
+    public List<Pinnable> getPinDTOList() {
         return pinDTOList;
     }
 
-    public void setPinDTOList(List<Pin> pinDTOList) {
+    public void setPinDTOList(List<Pinnable> pinDTOList) {
         this.pinDTOList = pinDTOList;
     }
 }

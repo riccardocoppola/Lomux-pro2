@@ -7,7 +7,7 @@ package com.example.stefano.lomux_pro.model;
 public class PinHasPintype {
     protected PinHasPintypePK pinHasPintypeDTOPK;
     private Short isprincipal;
-    private Pin pinDTO;
+    private Pinnable pinDTO;
     private Pintype pintypeDTO;
 
     public PinHasPintypePK getPinHasPintypeDTOPK() {
@@ -26,11 +26,11 @@ public class PinHasPintype {
         this.isprincipal = isprincipal;
     }
 
-    public Pin getPinDTO() {
+    public Pinnable getPinDTO() {
         return pinDTO;
     }
 
-    public void setPinDTO(Pin pinDTO) {
+    public void setPinDTO(Pinnable pinDTO) {
         this.pinDTO = pinDTO;
     }
 

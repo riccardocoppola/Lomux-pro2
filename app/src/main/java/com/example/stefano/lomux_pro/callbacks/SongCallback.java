@@ -1,6 +1,5 @@
 package com.example.stefano.lomux_pro.callbacks;
 
-import com.example.stefano.lomux_pro.model.Pin;
 import com.example.stefano.lomux_pro.model.SongHasMediatype;
 import com.example.stefano.lomux_pro.rest.RestConfig;
 

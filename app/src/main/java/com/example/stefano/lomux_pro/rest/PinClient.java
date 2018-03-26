@@ -3,12 +3,11 @@ package com.example.stefano.lomux_pro.rest;
 
 import com.example.stefano.lomux_pro.model.Album;
 import com.example.stefano.lomux_pro.model.Artist;
-import com.example.stefano.lomux_pro.model.Pin;
+import com.example.stefano.lomux_pro.model.Pinnable;
 import com.example.stefano.lomux_pro.model.PinHasPintype;
 import com.example.stefano.lomux_pro.model.Song;
 import com.example.stefano.lomux_pro.model.SongHasMediatype;
 
-import java.lang.reflect.Array;
 import java.util.List;
 
 import retrofit2.Call;
@@ -26,12 +25,12 @@ public interface PinClient {
     //@POST("read_database/get_local_pins")
     @GET("read_database/get_local_pins")
     //@FormUrlEncoded
-    Call<List<Pin>> getLocalPins(@Query("neLat") double neLat, @Query("neLon") double neLon, @Query("swLat") double swLat, @Query("swLon") double swLon,@Query("ids") List<String> ids);
+    Call<List<Pinnable>> getLocalPins(@Query("neLat") double neLat, @Query("neLon") double neLon, @Query("swLat") double swLat, @Query("swLon") double swLon, @Query("ids") List<String> ids);
 
     //@POST("read_database/get_local_pins")
     @GET("read_database/get_other_info")
     //@FormUrlEncoded
-    Call<Pin> getOtherInfo(@Query("pinId") String id);
+    Call<Pinnable> getOtherInfo(@Query("pinId") String id);
 
     //@POST("read_database/get_local_pins")
     @GET("read_database/get_media_info")

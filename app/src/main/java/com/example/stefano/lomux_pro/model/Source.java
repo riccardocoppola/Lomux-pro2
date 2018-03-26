@@ -9,7 +9,7 @@ import java.util.List;
 public class Source {
     private Integer idSource;
     private String sourceName;
-    private List<Pin> pinDTOList;
+    private List<Pinnable> pinDTOList;
 
     public Integer getIdSource() {
         return idSource;
@@ -27,11 +27,11 @@ public class Source {
         this.sourceName = sourceName;
     }
 
-    public List<Pin> getPinDTOList() {
+    public List<Pinnable> getPinDTOList() {
         return pinDTOList;
     }
 
-    public void setPinDTOList(List<Pin> pinDTOList) {
+    public void setPinDTOList(List<Pinnable> pinDTOList) {
         this.pinDTOList = pinDTOList;
     }
 }

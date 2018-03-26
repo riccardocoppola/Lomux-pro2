@@ -7,7 +7,6 @@ import android.widget.Toast;
 
 import com.example.stefano.lomux_pro.LomuxMapActivity;
 import com.example.stefano.lomux_pro.model.Itinerary;
-import com.example.stefano.lomux_pro.model.Pin;
 import com.example.stefano.lomux_pro.rest.RestConfig;
 
 import java.util.List;

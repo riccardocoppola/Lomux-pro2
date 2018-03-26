@@ -6,12 +6,13 @@ import java.util.List;
  * Created by Franc on 23/03/2018.
  */
 
-public class VeneuPin implements Pin
+public class VenuePin extends Pin
 {
     private Venue venue;
 
-    public VeneuPin(Venue v)
+    public VenuePin(Venue v)
     {
+        super(v.getVenueName(), v.getLocation());
         this.venue = v;
     }
 

@@ -1,40 +1,28 @@
 package com.example.stefano.lomux_pro;
 
 import android.annotation.SuppressLint;
-import android.app.SearchManager;
 import android.content.ActivityNotFoundException;
-import android.content.ClipData;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.AsyncTask;
-import android.provider.MediaStore;
-import android.provider.SyncStateContract;
-import android.support.annotation.UiThread;
-import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.view.menu.MenuBuilder;
 
 import android.support.v7.view.menu.MenuPopupHelper;
 import android.support.v7.widget.PopupMenu;
-import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
-import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
-import android.text.style.StyleSpan;
 import android.text.style.UnderlineSpan;
 import android.util.Log;
 //import android.view.Menu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -42,20 +30,15 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.net.Uri;
-import android.widget.Toast;
 
 import com.example.stefano.lomux_pro.callbacks.PinsCallback;
-import com.example.stefano.lomux_pro.callbacks.SongCallback;
 import com.example.stefano.lomux_pro.fragment.YoutubeFragment;
-import com.example.stefano.lomux_pro.listener.MediaButtonClickListener;
 import com.example.stefano.lomux_pro.listener.URIClickListener;
 import com.example.stefano.lomux_pro.model.Album;
 import com.example.stefano.lomux_pro.model.AlbumHasMediatype;
 import com.example.stefano.lomux_pro.model.Artist;
 import com.example.stefano.lomux_pro.model.Link;
-import com.example.stefano.lomux_pro.model.Lyrics;
-import com.example.stefano.lomux_pro.model.Mediatype;
-import com.example.stefano.lomux_pro.model.Pin;
+import com.example.stefano.lomux_pro.model.Pinnable;
 import com.example.stefano.lomux_pro.model.PinHasPintype;
 import com.example.stefano.lomux_pro.model.Pintype;
 import com.example.stefano.lomux_pro.model.Song;
@@ -65,18 +48,10 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.TreeMap;
-
-import static android.content.ContentValues.TAG;
-import static java.security.AccessController.getContext;
 
 /**
  * Created by Stefano on 18/10/2017.
@@ -85,7 +60,7 @@ import static java.security.AccessController.getContext;
 public class PinInfoSlidedPanel {
 
     private LomuxMapActivity view;
-    private Pin pin;
+    private Pinnable pin;
     private TextView title;
     private ImageView pin_title_image;
     private TextView address_textview;
@@ -118,7 +93,7 @@ public class PinInfoSlidedPanel {
     private ProgressBar loader;
 
 
-    public PinInfoSlidedPanel(LomuxMapActivity view, Pin pin) {
+    public PinInfoSlidedPanel(LomuxMapActivity view, Pinnable pin) {
         this.view = view;
         this.pin = pin;
         this.title = view.findViewById(R.id.pin_fragment_layout_title);
@@ -282,7 +257,7 @@ public class PinInfoSlidedPanel {
         @Override
         protected Void doInBackground(Void... params) {
             try {
-                final Pin ret = PinsCallback.getInstance().get_other_info(pin.getIdPin());
+                final Pinnable ret = PinsCallback.getInstance().get_other_info(pin.getIdPin());
                 if(ret==null) return null;
                 view.runOnUiThread(new Runnable() {
                     @Override
@@ -310,7 +285,7 @@ public class PinInfoSlidedPanel {
 
 
 
-        private void complete_info(Pin ret ){
+        private void complete_info(Pinnable ret ){
 
             //1) Address: geolocation from the lat-long, and address inside address_textview
             Geocoder geocoder = new Geocoder(view, Locale.getDefault());
