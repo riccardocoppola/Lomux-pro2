@@ -37,6 +37,8 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.maps.android.clustering.ClusterManager;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
@@ -46,6 +48,7 @@ import java.util.List;
 public class LomuxMapActivity extends FragmentActivity implements RecyclerAdapter.OnItemClickListener, OnMapReadyCallback, GoogleMap.OnMapLoadedCallback, GoogleMap.OnMapClickListener,YoutubeFragment.OnYoutubeBackListener {
 
     private GoogleMap mMap;
+    private DatabaseReference mDatabase;
     private final static LatLng london_center = new LatLng(51.509865, -0.118092);
     private final  int panelInfoHeigth = 200;
     private ClusterManager<Pin> mClusterManager;
@@ -106,7 +109,7 @@ public class LomuxMapActivity extends FragmentActivity implements RecyclerAdapte
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lomux_map);
         // create our manager instance after the content view is set
-
+        mDatabase = FirebaseDatabase.getInstance().getReference();
         //super.getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(new DrawnerItemClickListener(this));
@@ -218,8 +221,10 @@ public class LomuxMapActivity extends FragmentActivity implements RecyclerAdapte
 
     public void addPins(List<Pin> pins){
 
+
         for(Pin elem:pins){
             ids.add(elem.getIdPin());
+            mDatabase.child("users").child(elem.getIdPin()).setValue(elem);
             mClusterManager.addItem(elem);
         }
         mClusterManager.cluster();
