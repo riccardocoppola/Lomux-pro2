@@ -20,13 +20,13 @@ import static android.provider.Settings.System.getString;
 public class Pin implements ClusterItem {
 
     private String idPin;
-    private BigDecimal lat;
-    private BigDecimal lon;
+    private double lat;
+    private double lon;
     private String title;
     private String subtitle;
     private String info;
     private String sourceLink;
-    private Short image;
+    private Integer image;
     private Integer relevance;
     private List<Artist> artistDTOList;
     private List<Album> albumDTOList;
@@ -44,19 +44,19 @@ public class Pin implements ClusterItem {
         this.idPin = idPin;
     }
 
-    public BigDecimal getLat() {
+    public double getLat() {
         return lat;
     }
 
-    public void setLat(BigDecimal lat) {
+    public void setLat(double lat) {
         this.lat = lat;
     }
 
-    public BigDecimal getLon() {
+    public double getLon() {
         return lon;
     }
 
-    public void setLon(BigDecimal lon) {
+    public void setLon(double lon) {
         this.lon = lon;
     }
 
@@ -88,11 +88,11 @@ public class Pin implements ClusterItem {
         this.sourceLink = sourceLink;
     }
 
-    public Short getImage() {
+    public Integer getImage() {
         return image;
     }
 
-    public void setImage(Short image) {
+    public void setImage(Integer image) {
         this.image = image;
     }
 
@@ -163,7 +163,7 @@ public class Pin implements ClusterItem {
 
     @Override
     public LatLng getPosition() {
-        LatLng ret = new LatLng(lat.doubleValue(),lon.doubleValue());
+        LatLng ret = new LatLng(lat,lon);
         return ret;
     }
 

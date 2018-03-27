@@ -17,7 +17,7 @@ public class Itinerary {
 
     private String info;
 
-    private Short image; //0 = non c'è, 1 = c'è
+    private int image; //0 = non c'è, 1 = c'è
     //se presente cerca
 
     private List<Pin> pinDTOList;
@@ -46,7 +46,7 @@ public class Itinerary {
         this.info = info;
     }
 
-    public Short getImage() {
+    public int getImage() {
         return image;
     }
 
@@ -58,7 +58,7 @@ public class Itinerary {
             return "0";
     }
 
-    public void setImage(Short image) {
+    public void setImage(int image) {
         this.image = image;
     }
 
