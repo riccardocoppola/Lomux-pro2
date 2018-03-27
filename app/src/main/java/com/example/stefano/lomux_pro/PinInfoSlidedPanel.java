@@ -319,8 +319,8 @@ public class PinInfoSlidedPanel {
 
             try {
                 addresses = geocoder.getFromLocation(
-                        pin.getLat().doubleValue(),
-                        pin.getLon().doubleValue(),
+                        pin.getLat(),
+                        pin.getLon(),
                         // In this sample, get just a single address.
                         1);
             } catch (Exception e) {
@@ -334,7 +334,7 @@ public class PinInfoSlidedPanel {
                String[] address_parts = address.getAddressLine(0).split(",");
                 address_textview.setText(address_parts[0]);
                 address_textview.setTypeface(null, Typeface.BOLD);
-                address_textview.setOnClickListener(new ArrowClickListener(pin.getLon().doubleValue(), pin.getLat().doubleValue()));
+                address_textview.setOnClickListener(new ArrowClickListener(pin.getLon(), pin.getLat()));
             }
 
             else {

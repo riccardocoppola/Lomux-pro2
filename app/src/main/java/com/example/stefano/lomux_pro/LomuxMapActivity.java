@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.media.Image;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentActivity;
@@ -21,6 +22,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.stefano.lomux_pro.adapters.RecyclerAdapter;
 import com.example.stefano.lomux_pro.callbacks.ItineraryCallback;
@@ -37,8 +39,16 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.maps.android.clustering.ClusterManager;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
@@ -49,6 +59,7 @@ public class LomuxMapActivity extends FragmentActivity implements RecyclerAdapte
 
     private GoogleMap mMap;
     private DatabaseReference mDatabase;
+    FirebaseFirestore db;
     private final static LatLng london_center = new LatLng(51.509865, -0.118092);
     private final  int panelInfoHeigth = 200;
     private ClusterManager<Pin> mClusterManager;
@@ -110,6 +121,7 @@ public class LomuxMapActivity extends FragmentActivity implements RecyclerAdapte
         setContentView(R.layout.activity_lomux_map);
         // create our manager instance after the content view is set
         mDatabase = FirebaseDatabase.getInstance().getReference();
+         db = FirebaseFirestore.getInstance();
         //super.getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(new DrawnerItemClickListener(this));
@@ -216,6 +228,26 @@ public class LomuxMapActivity extends FragmentActivity implements RecyclerAdapte
         MapChangesListener mapChangesListener =new MapChangesListener(mMap,this);
         mMap.setOnCameraIdleListener(mapChangesListener);
         PinsCallback.getInstance().get_local_pins(mMap,mapChangesListener.getActualVisibleArea(),ids,this);
+
+        db.collection(Pin.class.getSimpleName())
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                mClusterManager.addItem(document.toObject(Pin.class));
+                                Log.d("Element", document.getId() + " => " + document.getData());
+                            }
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Error adding document"+ task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                            Log.w("ERROR", "Error getting documents.", task.getException());
+                        }
+                    }
+                });
+
+
+        mClusterManager.cluster();
         ItineraryCallback.getInstance().get_itinerary(this);
     }
 
@@ -224,7 +256,24 @@ public class LomuxMapActivity extends FragmentActivity implements RecyclerAdapte
 
         for(Pin elem:pins){
             ids.add(elem.getIdPin());
-            mDatabase.child("users").child(elem.getIdPin()).setValue(elem);
+           // mDatabase.child("users").child(elem.getIdPin()).setValue(elem);
+            // Add a new document with a generated ID
+            db.collection(Pin.class.getSimpleName())
+                    .document(elem.getIdPin())
+                    .set(elem)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Log.d("SUCCESS", "DocumentSnapshot added ");
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(getApplicationContext(), "Error adding document"+e.getMessage(), Toast.LENGTH_SHORT).show();
+                            Log.w("ERROR", "Error adding document", e);
+                        }
+                    });
             mClusterManager.addItem(elem);
         }
         mClusterManager.cluster();
