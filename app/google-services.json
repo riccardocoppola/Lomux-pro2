@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "865375513574",
+    "firebase_url": "https://iosonolamusicaprototype-1.firebaseio.com",
+    "project_id": "iosonolamusicaprototype-1",
+    "storage_bucket": "iosonolamusicaprototype-1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:865375513574:android:9d4cc43ee0c3a57c",
+        "android_client_info": {
+          "package_name": "com.example.stefano.lomux_pro"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "865375513574-ujrofenjjsomsmkmjmskvesk4qrtlih3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.stefano.lomux_pro",
+            "certificate_hash": "14cdd1df786e03b7abbc31e300d6105a1cb41395"
+          }
+        },
+        {
+          "client_id": "865375513574-r03asrgugb0f727o5l4estfb23etillv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAJ4vHxH4_V0ojOSE1q91oYon-4fuqjaIA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "865375513574-r03asrgugb0f727o5l4estfb23etillv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

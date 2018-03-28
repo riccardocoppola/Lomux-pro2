@@ -7,20 +7,15 @@ package com.example.stefano.lomux_pro;
 
 import android.content.Context;
 
-import com.example.stefano.lomux_pro.model.Event;
 import com.example.stefano.lomux_pro.model.EventPin;
 import com.example.stefano.lomux_pro.model.Pin;
-import com.example.stefano.lomux_pro.model.Pinnable;
-import com.example.stefano.lomux_pro.model.PinHasPintype;
-import com.example.stefano.lomux_pro.model.Pintype;
-import com.example.stefano.lomux_pro.model.Venue;
 import com.example.stefano.lomux_pro.model.VenuePin;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
-import com.google.maps.android.clustering.*;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 
 
