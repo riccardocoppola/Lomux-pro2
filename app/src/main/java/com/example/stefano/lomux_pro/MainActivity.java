@@ -11,17 +11,27 @@ import android.net.NetworkInfo;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity {
+//import com.firebase.ui.auth.AuthUI;
 
+import com.firebase.ui.auth.AuthUI;
+
+import java.util.Arrays;
+
+import static android.view.WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
+
+public class MainActivity extends AppCompatActivity {
+    private static final int RC_SIGN_IN = 123;
     private ImageView img = null;
     private ProgressBar progressBar = null;
     private TextView txt = null;
@@ -78,7 +88,28 @@ public class MainActivity extends AppCompatActivity {
 
     public void animate_visitLondon_button() {
         final ImageButton visitLondon = (ImageButton) findViewById(R.id.imageButton);
+        final Button loginButton = findViewById(R.id.loginButton);
+        loginButton.setVisibility(View.VISIBLE);
         visitLondon.setVisibility(View.VISIBLE);
+
+        loginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                /*Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                startActivity(intent);*/
+                startActivityForResult(
+                        AuthUI.getInstance()
+                                .createSignInIntentBuilder()
+                                .setAvailableProviders(Arrays.asList(
+                                        new AuthUI.IdpConfig.EmailBuilder().build(),
+                                        new AuthUI.IdpConfig.GoogleBuilder().build(),
+                                        new AuthUI.IdpConfig.FacebookBuilder().build()
+                                       // new AuthUI.IdpConfig.TwitterBuilder().build())
+                                        ))
+                                .build(),
+                        RC_SIGN_IN);
+            }
+        });
         visitLondon.setAlpha(0.0f);
         visitLondon.setScaleX(1.4f);
         visitLondon.setScaleY(1.4f);
@@ -98,8 +129,6 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onClick(View view) {
                                 Intent intent = new Intent(getApplicationContext(), LomuxMapActivity.class);
-                                intent.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-                                intent.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
                                 startActivity(intent);
                             }
                         });
