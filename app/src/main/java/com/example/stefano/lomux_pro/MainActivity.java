@@ -25,6 +25,8 @@ import android.widget.TextView;
 //import com.firebase.ui.auth.AuthUI;
 
 import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.auth.ErrorCodes;
+import com.firebase.ui.auth.IdpResponse;
 
 import java.util.Arrays;
 
@@ -97,15 +99,19 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 /*Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                 startActivity(intent);*/
+                AuthUI.IdpConfig facebookIdp = new AuthUI.IdpConfig.FacebookBuilder()
+                        .setPermissions(Arrays.asList("user_friends"))
+                        .build();
                 startActivityForResult(
                         AuthUI.getInstance()
                                 .createSignInIntentBuilder()
                                 .setAvailableProviders(Arrays.asList(
                                         new AuthUI.IdpConfig.EmailBuilder().build(),
                                         new AuthUI.IdpConfig.GoogleBuilder().build(),
-                                        new AuthUI.IdpConfig.FacebookBuilder().build()
-                                       // new AuthUI.IdpConfig.TwitterBuilder().build())
-                                        ))
+                                        facebookIdp,
+                                        new AuthUI.IdpConfig.TwitterBuilder().build())
+                                        )
+                                .setIsSmartLockEnabled(!BuildConfig.DEBUG /* credentials */, true /* hints */)
                                 .build(),
                         RC_SIGN_IN);
             }
@@ -146,6 +152,36 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
+@Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        // RC_SIGN_IN is the request code you passed into startActivityForResult(...) when starting the sign in flow.
+        if (requestCode == RC_SIGN_IN) {
+            IdpResponse response = IdpResponse.fromResultIntent(data);
+
+            // Successfully signed in
+            if (resultCode == RESULT_OK) {
+                String user = response.getUser().getName();
+                Snackbar.make(findViewById(android.R.id.content),"WELCOME:"+user, Snackbar.LENGTH_SHORT).show();
+                //startActivity(SignedInActivity.createIntent(this, response.));
+            } else {
+                // Sign in failed
+                if (response == null) {
+                    // User pressed back button
+                    Snackbar.make(findViewById(android.R.id.content),"SIGN IN CANCELLED", Snackbar.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (response.getError().getErrorCode() == ErrorCodes.NO_NETWORK) {
+                    Snackbar.make(findViewById(android.R.id.content),"NETWORK ERROR", Snackbar.LENGTH_SHORT).show();
+                    return;
+                }
+
+                Snackbar.make(findViewById(android.R.id.content),"UNKNOWN ERROR", Snackbar.LENGTH_SHORT).show();
+                Log.e("SIGN IN ERROR", "Sign-in error: ", response.getError());
+            }
+        }
+    }
 
     public  static void create_snack_bar(final View v){
 

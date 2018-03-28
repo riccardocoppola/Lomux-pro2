@@ -7,6 +7,6 @@
         <string name="facebook_application_id" translatable="false">205707016869055</string>
         <string name="facebook_login_protocol_scheme" translatable="false">56fa6c4fd1f032dd347f270764f4ee4f</string>
         <!-- Twitter consumer key and secret -->
-        <string name="twitter_consumer_key" translatable="false">YOUR_CONSUMER_KEY</string>
-        <string name="twitter_consumer_secret" translatable="false">YOUR_CONSUMER_SECRET</string>
+        <string name="twitter_consumer_key" translatable="false">6lefMlBfgy9PM3wdaYIP04xWY</string>
+        <string name="twitter_consumer_secret" translatable="false">OwZjsJgd9edEXD2l1XH5ltNyAG87ssV0fvvxAd6AMzmhyI1V6d</string>
 </resources>

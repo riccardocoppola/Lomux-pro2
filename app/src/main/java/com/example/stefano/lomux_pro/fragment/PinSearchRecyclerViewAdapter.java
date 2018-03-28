@@ -29,9 +29,9 @@ public class PinSearchRecyclerViewAdapter extends RecyclerView.Adapter<PinSearch
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.place_autocomplete_fragment, parent, false);
-        return new ViewHolder(view);
+        /*View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.place_autocomplete_fragment, parent, false);*/
+        return new ViewHolder(parent);
     }
 
     @Override

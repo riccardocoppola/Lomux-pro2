@@ -43,8 +43,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -58,7 +56,6 @@ import java.util.List;
 public class LomuxMapActivity extends FragmentActivity implements RecyclerAdapter.OnItemClickListener, OnMapReadyCallback, GoogleMap.OnMapLoadedCallback, GoogleMap.OnMapClickListener,YoutubeFragment.OnYoutubeBackListener {
 
     private GoogleMap mMap;
-    private DatabaseReference mDatabase;
     FirebaseFirestore db;
     private final static LatLng london_center = new LatLng(51.509865, -0.118092);
     private final  int panelInfoHeigth = 200;
@@ -120,7 +117,6 @@ public class LomuxMapActivity extends FragmentActivity implements RecyclerAdapte
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lomux_map);
         // create our manager instance after the content view is set
-        mDatabase = FirebaseDatabase.getInstance().getReference();
          db = FirebaseFirestore.getInstance();
         //super.getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         NavigationView navigationView = findViewById(R.id.nav_view);
