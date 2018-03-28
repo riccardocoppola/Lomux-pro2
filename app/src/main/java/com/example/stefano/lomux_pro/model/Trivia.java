@@ -1,5 +1,7 @@
 package com.example.stefano.lomux_pro.model;
 
+import com.google.firebase.firestore.GeoPoint;
+
 import java.util.List;
 
 /**
@@ -12,7 +14,7 @@ public class Trivia
     private String name;
     private String info;
     private List<Artist> artists;
-    private Location location;
+    private GeoPoint location;
     private Gallery pictures;
     private List<Genre> genres;
 
@@ -20,7 +22,7 @@ public class Trivia
                   String name,
                   String info,
                   List<Artist> artists,
-                  Location location,
+                  GeoPoint location,
                   Gallery pictures,
                   List<Genre> genres) {
         this.id = id;
@@ -64,11 +66,11 @@ public class Trivia
         this.artists = artists;
     }
 
-    public Location getLocation() {
+    public GeoPoint getLocation() {
         return location;
     }
 
-    public void setLocation(Location location) {
+    public void setLocation(GeoPoint location) {
         this.location = location;
     }
 

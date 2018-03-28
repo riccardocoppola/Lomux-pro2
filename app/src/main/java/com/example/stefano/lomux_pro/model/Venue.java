@@ -1,5 +1,7 @@
 package com.example.stefano.lomux_pro.model;
 
+import com.google.firebase.firestore.GeoPoint;
+
 import java.util.List;
 
 /**
@@ -11,7 +13,7 @@ public class Venue {
     private String venueName;
     private String venueInfo;
     private List<Event> events;
-    private Location location;
+    private GeoPoint location;
     private Gallery gallery;
 
 
@@ -19,7 +21,7 @@ public class Venue {
                  String venueName,
                  String venueInfo,
                  List<Event> events,
-                 Location location,
+                 GeoPoint location,
                  Gallery gallery) {
         this.id = id;
         this.venueName = venueName;
@@ -57,12 +59,12 @@ public class Venue {
         this.events = events;
     }
 
-    public Location getLocation()
+    public GeoPoint getLocation()
     {
         return this.location;
     }
 
-    public void setLocation(Location location) {
+    public void setLocation(GeoPoint location) {
         this.location = location;
     }
 

@@ -1,6 +1,7 @@
 package com.example.stefano.lomux_pro.model;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.firestore.GeoPoint;
 import com.google.maps.android.clustering.ClusterItem;
 
 import java.util.List;
@@ -11,10 +12,10 @@ import java.util.List;
 
 public class Pin implements Pinnable, ClusterItem {
 
-    public Location location;
+    public GeoPoint location;
     public String title;
 
-    public Pin(String title, Location location)
+    public Pin(String title, GeoPoint location)
     {
         this.title = title;
         this.location = location;
@@ -22,7 +23,7 @@ public class Pin implements Pinnable, ClusterItem {
 
     @Override
     public LatLng getPosition() {
-        return new LatLng(location.getLat().doubleValue(), location.getLon().doubleValue());
+        return new LatLng(location.getLatitude(), location.getLongitude());
     }
 
     @Override
@@ -46,7 +47,7 @@ public class Pin implements Pinnable, ClusterItem {
     }
 
     @Override
-    public Location getLocation() {
+    public GeoPoint getLocation() {
         return null;
     }
 

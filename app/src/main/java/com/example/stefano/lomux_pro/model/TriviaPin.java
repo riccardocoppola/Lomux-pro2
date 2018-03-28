@@ -1,5 +1,7 @@
 package com.example.stefano.lomux_pro.model;
 
+import com.google.firebase.firestore.GeoPoint;
+
 import java.util.List;
 
 /**
@@ -9,6 +11,12 @@ import java.util.List;
 public class TriviaPin extends Pin
 {
     private Trivia trivia;
+
+    public TriviaPin(Trivia t) {
+        super(t.getName(), t.getLocation());
+        this.trivia = t;
+
+    }
 
     @Override
     public String getTitle() {
@@ -26,7 +34,7 @@ public class TriviaPin extends Pin
     }
 
     @Override
-    public Location getLocation() {
+    public GeoPoint getLocation() {
         return trivia.getLocation();
     }
 

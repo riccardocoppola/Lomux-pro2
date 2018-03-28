@@ -140,9 +140,9 @@ public class LomuxMapActivity extends FragmentActivity implements RecyclerAdapte
         mClusterManager.setRenderer(pinRenderer);
 
 
-        ClusterMangerListener cml = new ClusterMangerListener(mClusterManager, pinRenderer, slidingUpPanelLayout, this, mMap);
-        mClusterManager.setOnClusterClickListener(cml);
-        mMap.setOnMarkerClickListener(cml);
+       // ClusterMangerListener cml = new ClusterMangerListener(mClusterManager, pinRenderer, slidingUpPanelLayout, this, mMap);
+       // mClusterManager.setOnClusterClickListener(cml);
+       // mMap.setOnMarkerClickListener(cml);
         //mMap.setOnMarkerClickListener(new ClusterMangerListener(mClusterManager,pinRenderer,slidingUpPanelLayout,this));
 
         mMap.setOnMapClickListener(this);
@@ -207,8 +207,8 @@ public class LomuxMapActivity extends FragmentActivity implements RecyclerAdapte
     public void addPins(List<Pinnable> pins) {
 
         for (Pinnable elem : pins) {
-            ids.add(elem.getIdPin());
-            mClusterManager.addItem(elem);
+           // ids.add(elem.getIdPin());
+           // mClusterManager.addItem(elem);
         }
         mClusterManager.cluster();
     }

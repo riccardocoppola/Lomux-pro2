@@ -1,5 +1,7 @@
 package com.example.stefano.lomux_pro.model;
 
+import com.google.firebase.firestore.GeoPoint;
+
 import java.util.List;
 
 /**
@@ -12,6 +14,7 @@ public class EventPin extends Pin
 
     public EventPin(Event e)
     {
+        super(e.getName(), e.getLocation());
         this.event = e;
     }
 
@@ -31,7 +34,7 @@ public class EventPin extends Pin
     }
 
     @Override
-    public Location getLocation() {
+    public GeoPoint getLocation() {
         return event.getLocation();
     }
 
