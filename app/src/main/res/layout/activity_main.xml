@@ -63,7 +63,7 @@
         android:layout_weight="0.24"
         android:background="@null"
         android:scaleType="fitCenter"
-        android:visibility="gone"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"

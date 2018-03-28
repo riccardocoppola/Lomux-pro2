@@ -1,9 +1,13 @@
 package com.example.stefano.lomux_pro;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.CalendarContract;
+import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -21,18 +25,36 @@ import com.example.stefano.lomux_pro.listener.ClusterMangerListener;
 import com.example.stefano.lomux_pro.listener.DrawnerItemClickListener;
 import com.example.stefano.lomux_pro.listener.ItineraryAttachListener;
 import com.example.stefano.lomux_pro.listener.MapChangesListener;
+import com.example.stefano.lomux_pro.model.Event;
+import com.example.stefano.lomux_pro.model.Gallery;
 import com.example.stefano.lomux_pro.model.Itinerary;
 import com.example.stefano.lomux_pro.model.Pin;
 import com.example.stefano.lomux_pro.model.Pinnable;
+import com.example.stefano.lomux_pro.model.Venue;
+import com.example.stefano.lomux_pro.model.VenuePin;
+import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.auth.ErrorCodes;
+import com.firebase.ui.auth.IdpResponse;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.maps.android.clustering.ClusterManager;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class LomuxMapActivity extends FragmentActivity implements RecyclerAdapter.OnItemClickListener, OnMapReadyCallback, GoogleMap.OnMapLoadedCallback, GoogleMap.OnMapClickListener, YoutubeFragment.OnYoutubeBackListener {
@@ -41,10 +63,13 @@ public class LomuxMapActivity extends FragmentActivity implements RecyclerAdapte
     private final static LatLng turin_center = new LatLng(45.05, 7.666667);
     private final int panelInfoHeigth = 200;
     private ClusterManager<Pin> mClusterManager;
+    private FirebaseFirestore database;
     private SearchView searchView;
     private List<String> ids;
     SlidingUpPanelLayout slidingUpPanelLayout;
     PinRenderer pinRenderer;
+    private static final int RC_SIGN_IN = 123;
+
 
     //itinerary recycler view
     private RecyclerView mRecyclerView;
@@ -54,6 +79,19 @@ public class LomuxMapActivity extends FragmentActivity implements RecyclerAdapte
 
     public String getSelected_itinerary() {
         return selected_itinerary;
+    }
+
+    public void signIn() {
+        getParent().startActivityForResult(
+                AuthUI.getInstance()
+                        .createSignInIntentBuilder()
+                        .setAvailableProviders(Arrays.asList(
+                                new AuthUI.IdpConfig.EmailBuilder().build(),
+                                new AuthUI.IdpConfig.GoogleBuilder().build(),
+                                new AuthUI.IdpConfig.FacebookBuilder().build(),
+                                new AuthUI.IdpConfig.TwitterBuilder().build()))
+                        .build(),
+                RC_SIGN_IN);
     }
 
     //TODO
@@ -106,7 +144,7 @@ public class LomuxMapActivity extends FragmentActivity implements RecyclerAdapte
         slidingUpPanelLayout = findViewById(R.id.sliding_layout);
         slidingUpPanelLayout.setOverlayed(true);
         slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
-
+        database = FirebaseFirestore.getInstance();
         ids = new ArrayList<>();
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -200,7 +238,43 @@ public class LomuxMapActivity extends FragmentActivity implements RecyclerAdapte
     public void onMapLoaded() {
         MapChangesListener mapChangesListener = new MapChangesListener(mMap, this);
         mMap.setOnCameraIdleListener(mapChangesListener);
-        PinsCallback.getInstance().get_local_pins(mMap, mapChangesListener.getActualVisibleArea(), ids, this);
+        //PinsCallback.getInstance().get_local_pins(mMap, mapChangesListener.getActualVisibleArea(), ids, this);
+
+
+     /*   database.collection(Pin.class.getSimpleName()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        Pin p;
+                        if(document.getId().equals("4djvffLElntalactr4Sc"))
+                        {p= document.toObject(Pin.class);
+                        if (p instanceof VenuePin)
+                            Log.d("Pin", p.getTitle());
+                        }
+                       // mClusterManager.addItem(p);
+                        Log.d("Pin", document.getId() + " => " + document.getData());
+                    }
+                } else {
+                    Log.w("ERROR", "Error getting documents.", task.getException());
+                }
+            }
+        });*/
+        Venue v = new Venue("test","NAME","INFO", new ArrayList<Event>(),new GeoPoint(10,10), null);
+        database.collection(Venue.class.getSimpleName())
+                .add(v)
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference doc) {
+                        Log.d("SUCCESS", "DocumentSnapshot successfully written!"+doc.getId());
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("ERROR", "Error writing document", e);
+                    }
+                });
         ItineraryCallback.getInstance().get_itinerary(this);
     }
 
@@ -261,6 +335,36 @@ public class LomuxMapActivity extends FragmentActivity implements RecyclerAdapte
 
 
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        // RC_SIGN_IN is the request code you passed into startActivityForResult(...) when starting the sign in flow.
+        if (requestCode == RC_SIGN_IN) {
+            IdpResponse response = IdpResponse.fromResultIntent(data);
+
+            // Successfully signed in
+            if (resultCode == RESULT_OK) {
+                Snackbar.make(this.mRecyclerView,"BENVENUTO",Snackbar.LENGTH_SHORT).show();
+            } else {
+                // Sign in failed
+                if (response == null) {
+                    // User pressed back button
+                    Snackbar.make(this.mRecyclerView,"ANNULLATO",Snackbar.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (response.getError().getErrorCode() == ErrorCodes.NO_NETWORK) {
+                    Snackbar.make(this.mRecyclerView,"NO INTERNET CONNECTION",Snackbar.LENGTH_SHORT).show();
+                    return;
+                }
+
+                Snackbar.make(this.mRecyclerView,"ERRORE SCONOSCIUTO",Snackbar.LENGTH_SHORT).show();
+                Log.e("ERRORE", "Sign-in error: ", response.getError());
+            }
+        }
+    }
+
 
     @Override
     public void onYoutubeBack() {

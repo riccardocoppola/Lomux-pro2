@@ -133,6 +133,7 @@ public class PinInfoSlidedPanel {
    public void setTitle(){
        /*set the title info with the appropriate color and icon*/
 
+       /*
        title.setText(pin.getTitle());
        subtitle_textview.setText(pin.getSubtitle());
 
@@ -226,7 +227,7 @@ public class PinInfoSlidedPanel {
 
                    }
                });
-
+*/
 
    }
 
@@ -256,7 +257,7 @@ public class PinInfoSlidedPanel {
 
         @Override
         protected Void doInBackground(Void... params) {
-            try {
+           /* try {
                 final Pinnable ret = PinsCallback.getInstance().get_other_info(pin.getIdPin());
                 if(ret==null) return null;
                 view.runOnUiThread(new Runnable() {
@@ -271,7 +272,7 @@ public class PinInfoSlidedPanel {
                 e.printStackTrace();
             }
 
-
+*/
             return null;
         }
 
@@ -292,12 +293,12 @@ public class PinInfoSlidedPanel {
             List<Address> addresses = null;
 
 
-            try {
+            try {/*
                 addresses = geocoder.getFromLocation(
                         pin.getLat().doubleValue(),
                         pin.getLon().doubleValue(),
                         // In this sample, get just a single address.
-                        1);
+                        1);*/
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -309,7 +310,7 @@ public class PinInfoSlidedPanel {
                String[] address_parts = address.getAddressLine(0).split(",");
                 address_textview.setText(address_parts[0]);
                 address_textview.setTypeface(null, Typeface.BOLD);
-                address_textview.setOnClickListener(new ArrowClickListener(pin.getLon().doubleValue(), pin.getLat().doubleValue()));
+               // address_textview.setOnClickListener(new ArrowClickListener(pin.getLon().doubleValue(), pin.getLat().doubleValue()));
             }
 
             else {
@@ -320,7 +321,7 @@ public class PinInfoSlidedPanel {
 
             //2) artists: get the artists from the pin; show them in the artists textview
             //relation: pinhasartist
-            List<Artist> artists=ret.getArtistDTOList();
+           /* List<Artist> artists=ret.getArtistDTOList();
             if (artists != null && !(artists.isEmpty())) {
                 String listArtist="";
                 for(Artist artist:artists){
@@ -442,7 +443,7 @@ public class PinInfoSlidedPanel {
             else {
                 songs_textview_horizontal_layout.setVisibility(View.GONE);
             }
-
+*/
 /*
             //4) lyrics: if present, get the lyrics id and show preview in the textview, plus link to the site
             //relation: songhaslyrics
@@ -453,7 +454,7 @@ public class PinInfoSlidedPanel {
             }
             else {
                 lyrics_textview_horizontal_layout.setVisibility(View.GONE);
-            }*/
+            }*//*
 
             //5) albums: if present, get the albums and show the names in the textview, plus link if they have mediatype
             //relations: pinhasalbum, albumhasmediatype
@@ -586,7 +587,7 @@ public class PinInfoSlidedPanel {
             }
 
 
-
+*/
 
 
 

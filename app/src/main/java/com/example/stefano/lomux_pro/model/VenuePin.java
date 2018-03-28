@@ -14,7 +14,7 @@ public class VenuePin extends Pin
 
     public VenuePin(Venue v)
     {
-        super(v.getVenueName(), v.getLocation());
+        super(v.getLocation(), Pintype.VENUE);
         this.venue = v;
     }
 

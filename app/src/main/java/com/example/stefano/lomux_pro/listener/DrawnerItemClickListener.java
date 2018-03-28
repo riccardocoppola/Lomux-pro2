@@ -1,6 +1,7 @@
 package com.example.stefano.lomux_pro.listener;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -22,8 +23,12 @@ import android.widget.ListView;
 
 import com.example.stefano.lomux_pro.LomuxMapActivity;
 import com.example.stefano.lomux_pro.R;
+import com.firebase.ui.auth.AuthUI;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.security.acl.Group;
+import java.util.Arrays;
 
 /**
  * Created by Stefano on 16/10/2017.
@@ -31,6 +36,7 @@ import java.security.acl.Group;
 
 public class DrawnerItemClickListener implements  NavigationView.OnNavigationItemSelectedListener {
     private LomuxMapActivity view;
+    private static final int RC_SIGN_IN = 123;
 
     private SearchView searchView;
 
@@ -72,8 +78,9 @@ public class DrawnerItemClickListener implements  NavigationView.OnNavigationIte
             control_check(item);
             press_search();
 
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.nav_add) {
             control_check(item);
+            press_add();
 
         } else if (id == R.id.nav_slideshow) {
             control_check(item);
@@ -96,6 +103,23 @@ public class DrawnerItemClickListener implements  NavigationView.OnNavigationIte
 
         return true;
     }
+
+    private void press_add() {
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        Log.d("LOGIN",auth.getCurrentUser().toString());
+        if (auth.getCurrentUser() != null) {
+            // already signed in
+        } else {
+            Log.d("LOGIN","NO");
+            view.signIn();
+        }
+    }
+
+
+
+
+
+
 
     private void control_check(MenuItem item){
         /*if(item.isChecked())

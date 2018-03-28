@@ -31,9 +31,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        img = (ImageView) findViewById(R.id.imageView);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        txt =(TextView) findViewById(R.id.textView);
+        img = findViewById(R.id.imageView);
+        progressBar = findViewById(R.id.progressBar);
+        txt = findViewById(R.id.textView);
 
         Animation anim = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.start_animation);
@@ -53,12 +53,15 @@ public class MainActivity extends AppCompatActivity {
 
                 if(!isOnline())
                 {
-                    MainActivity.create_snack_bar(findViewById(android.R.id.content));
+                    Snackbar.make(findViewById(android.R.id.content), "Connection error", Snackbar.LENGTH_LONG).show();
+                    //MainActivity.create_snack_bar(findViewById(android.R.id.content));
                 }
 
-                else {
-                    animate_visitLondon_button();
-                }
+
+                    //animate_visitLondon_button();
+                    Intent intent = new Intent(getApplicationContext(), LomuxMapActivity.class);
+                    startActivity(intent);
+
 
             }
 
@@ -75,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
-
+/*
     public void animate_visitLondon_button() {
         final ImageButton visitLondon = (ImageButton) findViewById(R.id.imageButton);
         visitLondon.setVisibility(View.VISIBLE);
@@ -138,5 +141,5 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }).setActionTextColor(Color.RED)
                 .show();
-    }
+    }*/
 }

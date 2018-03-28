@@ -6,10 +6,6 @@ import com.google.maps.android.clustering.ClusterItem;
 import java.util.List;
 
 
-/**
- * Created by FrancescoMargiotta on 18/07/2017.
- */
-
 public interface Pinnable extends ClusterItem{
     String getTitle();
     String getSubTitle();

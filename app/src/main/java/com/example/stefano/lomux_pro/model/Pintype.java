@@ -6,17 +6,33 @@ import java.util.List;
  * Created by Stefano on 16/10/2017.
  */
 
-public class Pintype {
+public enum Pintype {
 
-    public static final int     VENUE   = 1;
-    public static final int     STUDIO  = 2;
-    public static final int     WORK    = 3;
-    public static final int     PRIVATE = 4;
-    public static final int     MONUMENT= 5;
-    public static final int     LOTM= 6;
+    EVENT(EventPin.class.getSimpleName()),
+    TRIVIA(TriviaPin.class.getSimpleName()),
+    VENUE(VenuePin.class.getSimpleName())
+    ;
 
+    private String typeName;
+
+    Pintype(String typeName){
+        this.typeName = typeName;
+    }
+
+    public String getTypeName() {
+        return typeName;
+    }
+    /*
+    VENUE,
+    STUDIO,
+    WORK,
+    PRIVATE,
+    MONUMENT,
+    LOTM*/
+
+
+   /* private String type;
     private Integer idPinType;
-    private String type;
     private List<PinHasPintype> pinHasPintypeDTOList;
 
     public Integer getIdPinType() {
@@ -41,5 +57,5 @@ public class Pintype {
 
     public void setPinHasPintypeDTOList(List<PinHasPintype> pinHasPintypeDTOList) {
         this.pinHasPintypeDTOList = pinHasPintypeDTOList;
-    }
+    }*/
 }

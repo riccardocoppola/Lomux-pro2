@@ -10,59 +10,24 @@ import java.util.List;
  * Created by Franc on 26/03/2018.
  */
 
-public class Pin implements Pinnable, ClusterItem {
+public abstract class Pin implements Pinnable, ClusterItem {
 
     public GeoPoint location;
-    public String title;
+    public Pintype pintype;
 
-    public Pin(String title, GeoPoint location)
+
+    public Pin(GeoPoint location, Pintype pintype)
     {
-        this.title = title;
         this.location = location;
+        this.pintype = pintype;
     }
 
     @Override
     public LatLng getPosition() {
         return new LatLng(location.getLatitude(), location.getLongitude());
     }
-
-    @Override
-    public String getTitle() {
-        return title;
-    }
-
     @Override
     public String getSnippet() {
-        return null;
-    }
-
-    @Override
-    public String getSubTitle() {
-        return null;
-    }
-
-    @Override
-    public Gallery getPictures() {
-        return null;
-    }
-
-    @Override
-    public GeoPoint getLocation() {
-        return null;
-    }
-
-    @Override
-    public List<Artist> getArtists() {
-        return null;
-    }
-
-    @Override
-    public String getInfo() {
-        return null;
-    }
-
-    @Override
-    public String getSource() {
         return null;
     }
 }

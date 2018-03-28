@@ -13,9 +13,8 @@ public class TriviaPin extends Pin
     private Trivia trivia;
 
     public TriviaPin(Trivia t) {
-        super(t.getName(), t.getLocation());
+        super(t.getLocation(), Pintype.TRIVIA);
         this.trivia = t;
-
     }
 
     @Override

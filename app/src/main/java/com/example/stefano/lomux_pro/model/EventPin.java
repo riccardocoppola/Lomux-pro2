@@ -14,7 +14,7 @@ public class EventPin extends Pin
 
     public EventPin(Event e)
     {
-        super(e.getName(), e.getLocation());
+        super(e.getLocation(), Pintype.EVENT);
         this.event = e;
     }
 
