@@ -17,6 +17,7 @@ public class Venue {
     private Gallery gallery;
 
 
+    public  Venue(){}
     public Venue(String id,
                  String venueName,
                  String venueInfo,
