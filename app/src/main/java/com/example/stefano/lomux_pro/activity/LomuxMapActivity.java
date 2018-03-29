@@ -1,4 +1,4 @@
-package com.example.stefano.lomux_pro;
+package com.example.stefano.lomux_pro.activity;
 
 import android.content.Intent;
 import android.os.Build;
@@ -15,8 +15,14 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.SearchView;
+import android.widget.TextView;
 
+import com.example.stefano.lomux_pro.PinRenderer;
+import com.example.stefano.lomux_pro.R;
+import com.example.stefano.lomux_pro.UserManager;
 import com.example.stefano.lomux_pro.adapters.RecyclerAdapter;
 import com.example.stefano.lomux_pro.callbacks.ItineraryCallback;
 import com.example.stefano.lomux_pro.callbacks.PinsCallback;
@@ -44,6 +50,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -52,6 +60,8 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.maps.android.clustering.ClusterManager;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -61,38 +71,22 @@ public class LomuxMapActivity extends FragmentActivity implements RecyclerAdapte
 
     private GoogleMap mMap;
     private final static LatLng turin_center = new LatLng(45.05, 7.666667);
-    private final int panelInfoHeigth = 200;
     private ClusterManager<Pin> mClusterManager;
     private FirebaseFirestore database;
-    private SearchView searchView;
     private List<String> ids;
     SlidingUpPanelLayout slidingUpPanelLayout;
     PinRenderer pinRenderer;
-    private static final int RC_SIGN_IN = 123;
 
 
     //itinerary recycler view
     private RecyclerView mRecyclerView;
-    private LinearLayoutManager mLinearLayoutManager;
-    private RecyclerAdapter mAdapter;
     private String selected_itinerary = null;
-
+    private FirebaseUser localUser;
+    private NavigationView navigationView;
     public String getSelected_itinerary() {
         return selected_itinerary;
     }
 
-    public void signIn() {
-        getParent().startActivityForResult(
-                AuthUI.getInstance()
-                        .createSignInIntentBuilder()
-                        .setAvailableProviders(Arrays.asList(
-                                new AuthUI.IdpConfig.EmailBuilder().build(),
-                                new AuthUI.IdpConfig.GoogleBuilder().build(),
-                                new AuthUI.IdpConfig.FacebookBuilder().build(),
-                                new AuthUI.IdpConfig.TwitterBuilder().build()))
-                        .build(),
-                RC_SIGN_IN);
-    }
 
     //TODO
     //load di TUTTI gli itinerari a start dell'applicazione, chiamare sincrona prima di getlocalpins
@@ -135,16 +129,14 @@ public class LomuxMapActivity extends FragmentActivity implements RecyclerAdapte
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lomux_map);
-        // create our manager instance after the content view is set
-
-        //super.getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView= findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(new DrawnerItemClickListener(this));
-        //searchView = findViewById(R.id.searchbar);
         slidingUpPanelLayout = findViewById(R.id.sliding_layout);
         slidingUpPanelLayout.setOverlayed(true);
         slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
         database = FirebaseFirestore.getInstance();
+        localUser = UserManager.getLocalUser();
+        setUserInfoOnDrawnerMenu();
         ids = new ArrayList<>();
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -260,6 +252,12 @@ public class LomuxMapActivity extends FragmentActivity implements RecyclerAdapte
                 }
             }
         });*/
+     if(localUser==null)
+         UserManager.login(this);
+     else
+         Log.d("OK","OK USER"+localUser.getEmail());
+    //    Intent intentGetMessage=new Intent(this,UserManager.class);
+     // startActivityForResult(intentGetMessage,11);
         Venue v = new Venue("test","NAME","INFO", new ArrayList<Event>(),new GeoPoint(10,10), null);
         database.collection(Venue.class.getSimpleName())
                 .add(v)
@@ -278,6 +276,11 @@ public class LomuxMapActivity extends FragmentActivity implements RecyclerAdapte
         ItineraryCallback.getInstance().get_itinerary(this);
     }
 
+    @Override
+    public void onActivityReenter(int resultCode, Intent data) {
+
+    }
+
     public void addPins(List<Pinnable> pins) {
 
         for (Pinnable elem : pins) {
@@ -290,9 +293,9 @@ public class LomuxMapActivity extends FragmentActivity implements RecyclerAdapte
     public void addItinerary(List<Itinerary> itineraries) {
         //itinerary recycler view init
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        mLinearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         mRecyclerView.setLayoutManager(mLinearLayoutManager);
-        mAdapter = new RecyclerAdapter(getItineraries(itineraries), this);
+        RecyclerAdapter mAdapter = new RecyclerAdapter(getItineraries(itineraries), this);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.addOnChildAttachStateChangeListener(new ItineraryAttachListener(this));
     }
@@ -336,11 +339,42 @@ public class LomuxMapActivity extends FragmentActivity implements RecyclerAdapte
 
     }
 
+    private void setUserInfoOnDrawnerMenu() {
+        if(localUser!=null){
+            View headerView = navigationView.getHeaderView(0);
+            TextView userName = headerView .findViewById(R.id.userNameDraw);
+            userName.setText(localUser.getDisplayName());
+            userName.setVisibility(View.VISIBLE);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                userName.setAutoSizeTextTypeWithDefaults(TextView.AUTO_SIZE_TEXT_TYPE_UNIFORM);
+            }
+            final ImageView image = headerView.findViewById(R.id.logoDraw);
+            final ProgressBar loader = headerView.findViewById(R.id.userImageLoaderDraw);
+            loader.setVisibility(View.VISIBLE);
+            loader.setZ(99);
+            Picasso.with(this)
+                    .load(localUser.getPhotoUrl())
+                    .into(image, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            loader.setVisibility(View.GONE);
+                        }
+
+                        @Override
+                        public void onError() {
+                            image.setImageResource(R.drawable.info_pin_placeholder);
+                            loader.setVisibility(View.GONE);
+
+                        }
+                    });
+
+        }
+    }
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        // RC_SIGN_IN is the request code you passed into startActivityForResult(...) when starting the sign in flow.
-        if (requestCode == RC_SIGN_IN) {
+        if (requestCode == UserManager.RC_SIGN_IN) {
             IdpResponse response = IdpResponse.fromResultIntent(data);
 
             // Successfully signed in

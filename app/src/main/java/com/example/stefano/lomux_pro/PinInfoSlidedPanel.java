@@ -1,6 +1,5 @@
 package com.example.stefano.lomux_pro;
 
-import android.annotation.SuppressLint;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -8,20 +7,9 @@ import android.graphics.Typeface;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.AsyncTask;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.view.menu.MenuBuilder;
 
-import android.support.v7.view.menu.MenuPopupHelper;
-import android.support.v7.widget.PopupMenu;
-import android.text.SpannableString;
-import android.text.Spanned;
-import android.text.method.LinkMovementMethod;
-import android.text.style.ClickableSpan;
-import android.text.style.UnderlineSpan;
 import android.util.Log;
 //import android.view.Menu;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -31,27 +19,13 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.net.Uri;
 
-import com.example.stefano.lomux_pro.callbacks.PinsCallback;
+import com.example.stefano.lomux_pro.activity.LomuxMapActivity;
 import com.example.stefano.lomux_pro.fragment.YoutubeFragment;
-import com.example.stefano.lomux_pro.listener.URIClickListener;
-import com.example.stefano.lomux_pro.model.Album;
-import com.example.stefano.lomux_pro.model.AlbumHasMediatype;
-import com.example.stefano.lomux_pro.model.Artist;
-import com.example.stefano.lomux_pro.model.Link;
 import com.example.stefano.lomux_pro.model.Pinnable;
-import com.example.stefano.lomux_pro.model.PinHasPintype;
-import com.example.stefano.lomux_pro.model.Pintype;
-import com.example.stefano.lomux_pro.model.Song;
-import com.example.stefano.lomux_pro.model.SongHasMediatype;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
 
-import java.io.IOException;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 /**
  * Created by Stefano on 18/10/2017.

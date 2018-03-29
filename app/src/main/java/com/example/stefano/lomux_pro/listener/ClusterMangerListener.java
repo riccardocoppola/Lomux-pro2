@@ -3,7 +3,7 @@ package com.example.stefano.lomux_pro.listener;
 import android.util.Log;
 import android.view.View;
 
-import com.example.stefano.lomux_pro.LomuxMapActivity;
+import com.example.stefano.lomux_pro.activity.LomuxMapActivity;
 import com.example.stefano.lomux_pro.PinInfoSlidedPanel;
 import com.example.stefano.lomux_pro.PinRenderer;
 import com.example.stefano.lomux_pro.model.Pinnable;

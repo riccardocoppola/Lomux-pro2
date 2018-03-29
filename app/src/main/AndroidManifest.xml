@@ -9,17 +9,21 @@
     -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
+    <!-- To auto-complete the email text field in the login form with the user's emails -->
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.READ_PROFILE" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/MyTheme">
+        android:theme="@style/MyMaterialTheme">
         <activity
-            android:name=".MainActivity"
+            android:name=".activity.MainActivity"
             android:theme="@style/Theme.Design.Light.NoActionBar">
-            android:screenOrientation="portrait"
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -39,11 +43,11 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".LomuxMapActivity"
+            android:name=".activity.LomuxMapActivity"
             android:label="@string/title_activity_lomux_map"
             android:screenOrientation="portrait"
             android:theme="@style/MyTheme" />
-
+        <activity android:name=".activity.PinsActivity"/>
     </application>
 
 </manifest>

@@ -5,7 +5,7 @@ import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.example.stefano.lomux_pro.LomuxMapActivity;
+import com.example.stefano.lomux_pro.activity.LomuxMapActivity;
 import com.example.stefano.lomux_pro.model.Album;
 import com.example.stefano.lomux_pro.model.Artist;
 import com.example.stefano.lomux_pro.model.Pinnable;

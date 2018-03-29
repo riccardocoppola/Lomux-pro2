@@ -1,8 +1,6 @@
 package com.example.stefano.lomux_pro.listener;
 
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
@@ -10,25 +8,15 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Gravity;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.view.animation.TranslateAnimation;
 import android.widget.SearchView;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ListView;
 
-import com.example.stefano.lomux_pro.LomuxMapActivity;
+import com.example.stefano.lomux_pro.activity.LomuxMapActivity;
 import com.example.stefano.lomux_pro.R;
-import com.firebase.ui.auth.AuthUI;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-
-import java.security.acl.Group;
-import java.util.Arrays;
+import com.example.stefano.lomux_pro.UserManager;
+import com.example.stefano.lomux_pro.activity.PinsActivity;
 
 /**
  * Created by Stefano on 16/10/2017.
@@ -105,13 +93,12 @@ public class DrawnerItemClickListener implements  NavigationView.OnNavigationIte
     }
 
     private void press_add() {
-        FirebaseAuth auth = FirebaseAuth.getInstance();
-        Log.d("LOGIN",auth.getCurrentUser().toString());
-        if (auth.getCurrentUser() != null) {
-            // already signed in
-        } else {
+        if(UserManager.localUserIsSignIn()){
+            Intent intent = new Intent(view.getApplicationContext(), PinsActivity.class);
+            view.startActivity(intent);
+        }else {
             Log.d("LOGIN","NO");
-            view.signIn();
+            UserManager.login(view);
         }
     }
 
@@ -122,32 +109,13 @@ public class DrawnerItemClickListener implements  NavigationView.OnNavigationIte
 
 
     private void control_check(MenuItem item){
-        /*if(item.isChecked())
-            item.setChecked(false);*/
+        if(item.isChecked())
+            item.setChecked(false);
     }
 
     private void press_search(){
 
-        if(searchView.getVisibility()!=View.VISIBLE) {
 
-           /* searchView.setAlpha(0.0f);
-            searchView.setScaleX(1.4f);
-            searchView.setScaleY(1.4f);
-            searchView.animate().
-                    scaleX(1).
-                    scaleY(1)
-                    .alpha(.8f);*/
-
-            Animation slide_down = AnimationUtils.loadAnimation(view.getApplicationContext(),
-                    R.anim.slide_down);
-            searchView.startAnimation(slide_down);
-            searchView.setAlpha(.85f);
-            searchView.setVisibility(View.VISIBLE);
-        }
-        else{
-
-            searchView.performClick();
-        }
     }
 
     private class Drawer_listener implements DrawerLayout.DrawerListener{
@@ -173,7 +141,7 @@ public class DrawnerItemClickListener implements  NavigationView.OnNavigationIte
         @Override
         public void onDrawerClosed(View drawerView) {
             item.setChecked(false);
-           // item.setCheckable(true);
+            item.setCheckable(true);
         }
 
         @Override
@@ -182,10 +150,10 @@ public class DrawnerItemClickListener implements  NavigationView.OnNavigationIte
                 if (!drawer.isDrawerOpen(Gravity.START)) {
                     // starts opening
 
-                    if(searchView.isInTouchMode()){
+                 /*  if(searchView.isInTouchMode()){
                         searchView.setQuery(searchView.getQuery(),false);
                         searchView.setIconified(true);
-                    }
+                    }*/
 
                 } else {
                     // closing drawer

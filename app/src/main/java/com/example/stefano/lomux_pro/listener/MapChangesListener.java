@@ -2,7 +2,7 @@ package com.example.stefano.lomux_pro.listener;
 
 import android.util.Log;
 
-import com.example.stefano.lomux_pro.LomuxMapActivity;
+import com.example.stefano.lomux_pro.activity.LomuxMapActivity;
 import com.example.stefano.lomux_pro.callbacks.PinsCallback;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;

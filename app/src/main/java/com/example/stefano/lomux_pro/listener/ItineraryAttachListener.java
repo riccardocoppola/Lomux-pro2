@@ -1,12 +1,11 @@
 package com.example.stefano.lomux_pro.listener;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.example.stefano.lomux_pro.LomuxMapActivity;
+import com.example.stefano.lomux_pro.activity.LomuxMapActivity;
 import com.example.stefano.lomux_pro.R;
 
 /**

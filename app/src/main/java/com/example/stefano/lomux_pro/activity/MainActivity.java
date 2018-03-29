@@ -1,39 +1,29 @@
-package com.example.stefano.lomux_pro;
+package com.example.stefano.lomux_pro.activity;
 
-import android.animation.Animator;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
-import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.stefano.lomux_pro.R;
+
 public class MainActivity extends AppCompatActivity {
 
     private ImageView img = null;
-    private ProgressBar progressBar = null;
-    private TextView txt = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        img = findViewById(R.id.imageView);
-        progressBar = findViewById(R.id.progressBar);
-        txt = findViewById(R.id.textView);
+        img = findViewById(R.id.logoDraw);
 
         Animation anim = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.start_animation);
@@ -48,8 +38,8 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                txt.setVisibility(View.GONE);
-                progressBar.setVisibility(View.GONE);
+                //txt.setVisibility(View.GONE);
+                //progressBar.setVisibility(View.GONE);
 
                 if(!isOnline())
                 {
@@ -59,8 +49,11 @@ public class MainActivity extends AppCompatActivity {
 
 
                     //animate_visitLondon_button();
-                    Intent intent = new Intent(getApplicationContext(), LomuxMapActivity.class);
-                    startActivity(intent);
+                Intent intent = new Intent(getApplicationContext(), LomuxMapActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                startActivity(intent);
 
 
             }
