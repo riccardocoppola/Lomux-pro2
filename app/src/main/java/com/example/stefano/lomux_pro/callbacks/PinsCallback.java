@@ -55,7 +55,7 @@ public class PinsCallback {
 
                 if (response.isSuccessful()&&response.body()!=null) {
 
-                    context.addPins(response.body());
+                    //context.addPins(response.body());
                 }
                 else{
                     onFailure(call,new Throwable());

@@ -13,17 +13,17 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.stefano.lomux_pro.R;
+import com.example.stefano.lomux_pro.Utility;
 
 public class MainActivity extends AppCompatActivity {
 
-    private ImageView img = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        img = findViewById(R.id.logoDraw);
+        ImageView img = findViewById(R.id.logoDraw);
 
         Animation anim = AnimationUtils.loadAnimation(getApplicationContext(),
                 R.anim.start_animation);
@@ -41,18 +41,19 @@ public class MainActivity extends AppCompatActivity {
                 //txt.setVisibility(View.GONE);
                 //progressBar.setVisibility(View.GONE);
 
-                if(!isOnline())
+                if(!Utility.isInternetAvailable())
                 {
-                    Snackbar.make(findViewById(android.R.id.content), "Connection error", Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(findViewById(android.R.id.content), "Nessuna connessione", Snackbar.LENGTH_LONG).show();
                     //MainActivity.create_snack_bar(findViewById(android.R.id.content));
                 }
 
 
                     //animate_visitLondon_button();
+                //Intent intent = new Intent(getApplicationContext(), LomuxMapActivity.class);
                 Intent intent = new Intent(getApplicationContext(), LomuxMapActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(intent);
 
 
@@ -66,11 +67,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public boolean isOnline() {
-        ConnectivityManager cm = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
-        NetworkInfo netInfo = cm.getActiveNetworkInfo();
-        return netInfo != null && netInfo.isConnectedOrConnecting();
-    }
+
 /*
     public void animate_visitLondon_button() {
         final ImageButton visitLondon = (ImageButton) findViewById(R.id.imageButton);

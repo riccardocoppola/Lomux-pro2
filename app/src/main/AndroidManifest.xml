@@ -20,7 +20,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/MyMaterialTheme">
+        android:theme="@style/MyMaterialTheme"
+        >
         <activity
             android:name=".activity.MainActivity"
             android:theme="@style/Theme.Design.Light.NoActionBar">
@@ -45,9 +46,9 @@
         <activity
             android:name=".activity.LomuxMapActivity"
             android:label="@string/title_activity_lomux_map"
-            android:screenOrientation="portrait"
-            android:theme="@style/MyTheme" />
-        <activity android:name=".activity.PinsActivity"/>
+            android:theme="@style/MyMaterialTheme" />
+        <activity android:name=".activity.PinsActivity" />
+        <activity android:name=".activity.AddPinActivity"></activity>
     </application>
 
 </manifest>

@@ -9,7 +9,7 @@
         <item
             android:id="@+id/nav_add"
             android:icon="@drawable/ic_menu_gallery"
-            android:title="Aggiungi pin" />
+            android:title="Gestisci pin" />
         <item
             android:id="@+id/nav_slideshow"
             android:icon="@drawable/ic_menu_slideshow"
@@ -31,6 +31,23 @@
                 android:id="@+id/nav_send"
                 android:icon="@drawable/ic_menu_send"
                 android:title="Send" />
+            </group>
+        </menu>
+    </item>
+    <item android:title="Account">
+        <menu>
+            <group android:checkableBehavior="single">
+
+                <item
+                    android:id="@+id/nav_login"
+                    android:icon="@drawable/ic_login_circle_black_24dp"
+                    android:title="Accedi" />
+                <item
+                    android:id="@+id/nav_logout"
+                    android:icon="@drawable/ic_login_circle_black_24dp"
+                    android:title="Esci"
+
+                    android:visible="false" />
             </group>
         </menu>
     </item>

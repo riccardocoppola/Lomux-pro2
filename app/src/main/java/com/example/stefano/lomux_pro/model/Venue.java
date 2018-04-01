@@ -11,27 +11,38 @@ import java.util.List;
 public class Venue {
     private String id;
     private String venueName;
+    private String subtitle;
     private String venueInfo;
+    private String address;
     private List<Event> events;
     private GeoPoint location;
     private Gallery gallery;
 
 
     public  Venue(){}
-    public Venue(String id,
-                 String venueName,
+    public Venue(String venueName,
+                 String subtitle,
                  String venueInfo,
+                 String address,
                  List<Event> events,
                  GeoPoint location,
                  Gallery gallery) {
-        this.id = id;
+        this.subtitle = subtitle;
         this.venueName = venueName;
+        this.address = address;
         this.venueInfo = venueInfo;
         this.events = events;
         this.location = location;
         this.gallery = gallery;
     }
 
+    public String getSubtitle() {
+        return subtitle;
+    }
+
+    public void setSubtitle(String subtitle) {
+        this.subtitle = subtitle;
+    }
     public String getId() {
         return id;
     }
@@ -80,4 +91,13 @@ public class Venue {
     public List<Event> getEvents() {
         return events;
     }
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+
 }

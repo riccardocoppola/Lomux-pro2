@@ -24,14 +24,14 @@ public class ItineraryAttachListener implements RecyclerView.OnChildAttachStateC
     public void onChildViewAttachedToWindow(View view) {
         ImageButton i = (ImageButton) view.findViewById(R.id.itinerary_button_image);
         TextView t = (TextView) view.findViewById(R.id.itinerary_button_text);
-        if (!t.getText().equals(context.getSelected_itinerary())) {
+       /* if (!t.getText().equals(context.getSelected_itinerary())) {
             i.setAlpha(0.5f);
             t.setAlpha(0.5f);
         }
         else {
             i.setAlpha(1f);
             t.setAlpha(1f);
-        }
+        }*/
     }
 
     @Override

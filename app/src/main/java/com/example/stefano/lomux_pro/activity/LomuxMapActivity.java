@@ -1,171 +1,173 @@
 package com.example.stefano.lomux_pro.activity;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.CalendarContract;
 import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.view.GravityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.SearchView;
 import android.widget.TextView;
 
+import com.arlib.floatingsearchview.FloatingSearchView;
 import com.example.stefano.lomux_pro.PinRenderer;
 import com.example.stefano.lomux_pro.R;
 import com.example.stefano.lomux_pro.UserManager;
-import com.example.stefano.lomux_pro.adapters.RecyclerAdapter;
-import com.example.stefano.lomux_pro.callbacks.ItineraryCallback;
-import com.example.stefano.lomux_pro.callbacks.PinsCallback;
-import com.example.stefano.lomux_pro.fragment.YoutubeFragment;
-import com.example.stefano.lomux_pro.listener.ClusterMangerListener;
+import com.example.stefano.lomux_pro.Utility;
 import com.example.stefano.lomux_pro.listener.DrawnerItemClickListener;
-import com.example.stefano.lomux_pro.listener.ItineraryAttachListener;
 import com.example.stefano.lomux_pro.listener.MapChangesListener;
-import com.example.stefano.lomux_pro.model.Event;
-import com.example.stefano.lomux_pro.model.Gallery;
-import com.example.stefano.lomux_pro.model.Itinerary;
 import com.example.stefano.lomux_pro.model.Pin;
-import com.example.stefano.lomux_pro.model.Pinnable;
 import com.example.stefano.lomux_pro.model.Venue;
 import com.example.stefano.lomux_pro.model.VenuePin;
-import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.maps.android.clustering.ClusterManager;
+import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-public class LomuxMapActivity extends FragmentActivity implements RecyclerAdapter.OnItemClickListener, OnMapReadyCallback, GoogleMap.OnMapLoadedCallback, GoogleMap.OnMapClickListener, YoutubeFragment.OnYoutubeBackListener {
-
+public class LomuxMapActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMapLoadedCallback {
     private GoogleMap mMap;
-    private final static LatLng turin_center = new LatLng(45.05, 7.666667);
+    public final static LatLng turin_center = new LatLng(45.05, 7.666667);
     private ClusterManager<Pin> mClusterManager;
-    private FirebaseFirestore database;
     private List<String> ids;
     SlidingUpPanelLayout slidingUpPanelLayout;
     PinRenderer pinRenderer;
 
 
     //itinerary recycler view
-    private RecyclerView mRecyclerView;
-    private String selected_itinerary = null;
+   // private RecyclerView mRecyclerView;
+    //private String selected_itinerary = null;
     private FirebaseUser localUser;
     private NavigationView navigationView;
-    public String getSelected_itinerary() {
-        return selected_itinerary;
-    }
+    private CoordinatorLayout dragView;
+    private FloatingSearchView searchView;
+    private SupportMapFragment mapFragment;
 
 
-    //TODO
-    //load di TUTTI gli itinerari a start dell'applicazione, chiamare sincrona prima di getlocalpins
-    private ArrayList<Itinerary> getItineraries(List<Itinerary> itineraries) {
-        ArrayList<Itinerary> tmp_itinerary_array = new ArrayList<>(itineraries);
 
-        Itinerary tmp_itinerary0 = new Itinerary();
-        tmp_itinerary0.setName("All Pins");
-        tmp_itinerary0.setInfo("all pins");
-        tmp_itinerary_array.add(0, tmp_itinerary0);
-       /* Itinerary tmp_itinerary1 = new Itinerary();
-        tmp_itinerary1.setName("a1");
-        tmp_itinerary1.setInfo("bbbbbb");
-        Itinerary tmp_itinerary2 = new Itinerary();
-        tmp_itinerary2.setName("a2");
-        tmp_itinerary2.setInfo("bbbbbb");
-        Itinerary tmp_itinerary3 = new Itinerary();
-        tmp_itinerary3.setName("a3");
-        tmp_itinerary3.setInfo("bbbbbb");
-        Itinerary tmp_itinerary4 = new Itinerary();
-        tmp_itinerary4.setName("a4");
-        tmp_itinerary4.setInfo("bbbbbb");
-        Itinerary tmp_itinerary5 = new Itinerary();
-        tmp_itinerary5.setName("a5");
-        tmp_itinerary5.setInfo("bbbbbb");
 
-        tmp_itinerary_array.add(tmp_itinerary0);
-        tmp_itinerary_array.add(tmp_itinerary1);
-        tmp_itinerary_array.add(tmp_itinerary2);
-        tmp_itinerary_array.add(tmp_itinerary3);
-        tmp_itinerary_array.add(tmp_itinerary4);
-        tmp_itinerary_array.add(tmp_itinerary5);
-*/
-        selected_itinerary = "All Pins";
-        return tmp_itinerary_array;
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lomux_map);
+
         navigationView= findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(new DrawnerItemClickListener(this));
         slidingUpPanelLayout = findViewById(R.id.sliding_layout);
-        slidingUpPanelLayout.setOverlayed(true);
-        slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
-        database = FirebaseFirestore.getInstance();
+
+        dragView = findViewById(R.id.dragViewMap);
+        searchView = findViewById(R.id.floating_search_view);
+        searchView.attachNavigationDrawerToMenuButton((DrawerLayout) findViewById(R.id.drawer_layout));
+        slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
         localUser = UserManager.getLocalUser();
         setUserInfoOnDrawnerMenu();
         ids = new ArrayList<>();
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+         mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
     }
 
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
+
     @Override
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(final GoogleMap googleMap) {
 
         mMap = googleMap;
 
         float zoom = 13.5f;
-        // Add a marker in London and move the camera
         mMap.moveCamera(CameraUpdateFactory.zoomTo(zoom));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(turin_center));
-
-        mMap.getUiSettings().setMapToolbarEnabled(false);
         mClusterManager = new ClusterManager<>(this, mMap);
         mClusterManager.setAnimation(true);
+        Utility.Firebase.Firestore.readCollection(Venue.class ,new Utility.Firebase.FirestoreListenerGetObject(){
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+                        Venue v;
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            v = document.toObject(Venue.class);
+                           v.setId(document.getId());
+                          mMap.addMarker(new MarkerOptions().position(new LatLng(v.getLocation().getLatitude(),v.getLocation().getLongitude())).title(v.getAddress()));
+                        }
+                        mClusterManager.cluster();
+                    } else {
+                        Log.d("ERROR", "Error getting documents: ", task.getException());
+                    }
+                }
+        });
+
+
+
+        ViewGroup.LayoutParams layoutParams = dragView.getLayoutParams();
+        //per bloccare lo slide prima della search bar
+        layoutParams.height = (int)(dragView.getHeight()-(searchView.getY()+searchView.getHeight()-26));
+        dragView.setLayoutParams(layoutParams);
+        slidingUpPanelLayout.setAnchorPoint(0.3f);
+        final int shadow = slidingUpPanelLayout.getShadowHeight();
+
+        slidingUpPanelLayout.addPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
+
+            @Override
+            public void onPanelSlide(View panel, float slideOffset) {
+                if(slideOffset==1){
+                    slidingUpPanelLayout.setShadowHeight(0);
+                    mapFragment.getView().setVisibility(View.INVISIBLE);
+                    for(Marker m:mClusterManager.getClusterMarkerCollection().getMarkers())
+                    Log.d("CLUSTER", m.getId()+" "+m.getPosition().toString());
+                }
+                else{
+                    slidingUpPanelLayout.setShadowHeight(shadow);
+                    mapFragment.getView().setVisibility(View.VISIBLE);
+                }
+                correctMap(slideOffset);
+            }
+
+            @Override
+            public void onPanelStateChanged(View panel, SlidingUpPanelLayout.PanelState previousState, SlidingUpPanelLayout.PanelState newState) {
+
+            }
+        });
+        correctMap(0);
+
+
+        //mMap.getUiSettings().setMapToolbarEnabled(false);
+
         pinRenderer = new PinRenderer(this.getApplicationContext(), mMap, mClusterManager);
         mClusterManager.setRenderer(pinRenderer);
 
@@ -175,12 +177,102 @@ public class LomuxMapActivity extends FragmentActivity implements RecyclerAdapte
        // mMap.setOnMarkerClickListener(cml);
         //mMap.setOnMarkerClickListener(new ClusterMangerListener(mClusterManager,pinRenderer,slidingUpPanelLayout,this));
 
-        mMap.setOnMapClickListener(this);
+      //  mMap.setOnMapClickListener(this);
         mMap.setOnMapLoadedCallback(this);
 
     }
 
+    private void correctMap(float slideOffset) {
+        final int panelHeight = dragView.getHeight();
+        final int visiblePanelHeight = slidingUpPanelLayout.getPanelHeight();
+        CameraPosition cameraPosition = mMap.getCameraPosition();
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newCameraPosition(cameraPosition);
+        mMap.setPadding(5, 10, 10, (int) (visiblePanelHeight + (panelHeight - visiblePanelHeight) * slideOffset));
+        mMap.moveCamera(cameraUpdate);
+    }
+
     @Override
+    public void onMapLoaded() {
+        MapChangesListener mapChangesListener = new MapChangesListener(mMap, this);
+        mMap.setOnCameraIdleListener(mapChangesListener);
+    }
+
+
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == UserManager.RC_SIGN_IN) {
+            IdpResponse response = IdpResponse.fromResultIntent(data);
+
+            // Successfully signed in
+            if (resultCode == RESULT_OK) {
+                Snackbar.make(navigationView,"Accesso effettutato",Snackbar.LENGTH_SHORT).show();
+                localUser = FirebaseAuth.getInstance().getCurrentUser();
+                setUserInfoOnDrawnerMenu();
+            } else {
+                // Sign in failed
+                if (response == null) {
+                    // User pressed back button
+                    Snackbar.make(navigationView,"Accesso annullato",Snackbar.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (response.getError().getErrorCode() == ErrorCodes.NO_NETWORK) {
+                    Snackbar.make(navigationView,"Nessuna connessione internet",Snackbar.LENGTH_SHORT).show();
+                    return;
+                }
+
+                Snackbar.make(navigationView,"Errore sconosciuto",Snackbar.LENGTH_SHORT).show();
+                Log.e("ERRORE", "Sign-in error: ", response.getError());
+            }
+        }
+    }
+
+    private void setUserInfoOnDrawnerMenu() {
+        if(localUser!=null){
+            View headerView = navigationView.getHeaderView(0);
+            TextView userName = headerView .findViewById(R.id.userNameDraw);
+            userName.setText(localUser.getDisplayName());
+            userName.setVisibility(View.VISIBLE);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                userName.setAutoSizeTextTypeWithDefaults(TextView.AUTO_SIZE_TEXT_TYPE_UNIFORM);
+            }
+            MenuItem login = navigationView.getMenu().findItem(R.id.nav_login);
+            login.setVisible(false);
+            MenuItem logout= navigationView.getMenu().findItem(R.id.nav_logout);
+            logout.setVisible(true);
+
+            final ImageView image = headerView.findViewById(R.id.logoDraw);
+            Uri photoUrl = localUser.getPhotoUrl();
+            if(photoUrl == null){
+                image.setImageResource(R.drawable.info_pin_placeholder);
+                return;
+            }
+            final ProgressBar loader = headerView.findViewById(R.id.userImageLoaderDraw);
+            Utility.loadImageInView(image,photoUrl, loader, this, R.drawable.info_pin_placeholder);
+
+        }
+    }
+
+
+    public void logoutComplete() {
+        View headerView = navigationView.getHeaderView(0);
+        TextView userName = headerView .findViewById(R.id.userNameDraw);
+        userName.setVisibility(View.GONE);
+        ImageView image = headerView.findViewById(R.id.logoDraw);
+        image.setImageResource(R.drawable.it0circle);
+        MenuItem login = navigationView.getMenu().findItem(R.id.nav_login);
+        login.setVisible(true);
+        MenuItem logout= navigationView.getMenu().findItem(R.id.nav_logout);
+        logout.setVisible(false);
+        localUser = FirebaseAuth.getInstance().getCurrentUser();
+        Snackbar.make(navigationView,"Logout effettutato",Snackbar.LENGTH_SHORT).show();
+    }
+
+
+}
+ /*   @Override
     public void onItemClick(Itinerary itinerary) {
 
         if (!itinerary.getName().equals(selected_itinerary)) {
@@ -221,6 +313,41 @@ public class LomuxMapActivity extends FragmentActivity implements RecyclerAdapte
 
     }
 
+    //TODO
+    //load di TUTTI gli itinerari a start dell'applicazione, chiamare sincrona prima di getlocalpins
+    private ArrayList<Itinerary> getItineraries(List<Itinerary> itineraries) {
+        ArrayList<Itinerary> tmp_itinerary_array = new ArrayList<>(itineraries);
+
+        Itinerary tmp_itinerary0 = new Itinerary();
+        tmp_itinerary0.setName("All Pins");
+        tmp_itinerary0.setInfo("all pins");
+        tmp_itinerary_array.add(0, tmp_itinerary0);
+        Itinerary tmp_itinerary1 = new Itinerary();
+        tmp_itinerary1.setName("a1");
+        tmp_itinerary1.setInfo("bbbbbb");
+        Itinerary tmp_itinerary2 = new Itinerary();
+        tmp_itinerary2.setName("a2");
+        tmp_itinerary2.setInfo("bbbbbb");
+        Itinerary tmp_itinerary3 = new Itinerary();
+        tmp_itinerary3.setName("a3");
+        tmp_itinerary3.setInfo("bbbbbb");
+        Itinerary tmp_itinerary4 = new Itinerary();
+        tmp_itinerary4.setName("a4");
+        tmp_itinerary4.setInfo("bbbbbb");
+        Itinerary tmp_itinerary5 = new Itinerary();
+        tmp_itinerary5.setName("a5");
+        tmp_itinerary5.setInfo("bbbbbb");
+
+        tmp_itinerary_array.add(tmp_itinerary0);
+        tmp_itinerary_array.add(tmp_itinerary1);
+        tmp_itinerary_array.add(tmp_itinerary2);
+        tmp_itinerary_array.add(tmp_itinerary3);
+        tmp_itinerary_array.add(tmp_itinerary4);
+        tmp_itinerary_array.add(tmp_itinerary5);
+
+        selected_itinerary = "All Pins";
+        return tmp_itinerary_array;
+    }
 
     public List<String> getListIds() {
         return ids;
@@ -232,33 +359,7 @@ public class LomuxMapActivity extends FragmentActivity implements RecyclerAdapte
         mMap.setOnCameraIdleListener(mapChangesListener);
         //PinsCallback.getInstance().get_local_pins(mMap, mapChangesListener.getActualVisibleArea(), ids, this);
 
-
-     /*   database.collection(Pin.class.getSimpleName()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        Pin p;
-                        if(document.getId().equals("4djvffLElntalactr4Sc"))
-                        {p= document.toObject(Pin.class);
-                        if (p instanceof VenuePin)
-                            Log.d("Pin", p.getTitle());
-                        }
-                       // mClusterManager.addItem(p);
-                        Log.d("Pin", document.getId() + " => " + document.getData());
-                    }
-                } else {
-                    Log.w("ERROR", "Error getting documents.", task.getException());
-                }
-            }
-        });*/
-     if(localUser==null)
-         UserManager.login(this);
-     else
-         Log.d("OK","OK USER"+localUser.getEmail());
-    //    Intent intentGetMessage=new Intent(this,UserManager.class);
-     // startActivityForResult(intentGetMessage,11);
-        Venue v = new Venue("test","NAME","INFO", new ArrayList<Event>(),new GeoPoint(10,10), null);
+    /*    Venue v = new Venue("test","NAME","INFO", new ArrayList<Event>(),new GeoPoint(10,10), null);
         database.collection(Venue.class.getSimpleName())
                 .add(v)
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
@@ -273,7 +374,7 @@ public class LomuxMapActivity extends FragmentActivity implements RecyclerAdapte
                         Log.w("ERROR", "Error writing document", e);
                     }
                 });
-        ItineraryCallback.getInstance().get_itinerary(this);
+       // ItineraryCallback.getInstance().get_itinerary(this);
     }
 
     @Override
@@ -284,8 +385,8 @@ public class LomuxMapActivity extends FragmentActivity implements RecyclerAdapte
     public void addPins(List<Pinnable> pins) {
 
         for (Pinnable elem : pins) {
-           // ids.add(elem.getIdPin());
-           // mClusterManager.addItem(elem);
+          //  ids.add(elem.getIdPin());
+          //  mClusterManager.addItem(elem);
         }
         mClusterManager.cluster();
     }
@@ -339,65 +440,9 @@ public class LomuxMapActivity extends FragmentActivity implements RecyclerAdapte
 
     }
 
-    private void setUserInfoOnDrawnerMenu() {
-        if(localUser!=null){
-            View headerView = navigationView.getHeaderView(0);
-            TextView userName = headerView .findViewById(R.id.userNameDraw);
-            userName.setText(localUser.getDisplayName());
-            userName.setVisibility(View.VISIBLE);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                userName.setAutoSizeTextTypeWithDefaults(TextView.AUTO_SIZE_TEXT_TYPE_UNIFORM);
-            }
-            final ImageView image = headerView.findViewById(R.id.logoDraw);
-            final ProgressBar loader = headerView.findViewById(R.id.userImageLoaderDraw);
-            loader.setVisibility(View.VISIBLE);
-            loader.setZ(99);
-            Picasso.with(this)
-                    .load(localUser.getPhotoUrl())
-                    .into(image, new Callback() {
-                        @Override
-                        public void onSuccess() {
-                            loader.setVisibility(View.GONE);
-                        }
-
-                        @Override
-                        public void onError() {
-                            image.setImageResource(R.drawable.info_pin_placeholder);
-                            loader.setVisibility(View.GONE);
-
-                        }
-                    });
-
-        }
-    }
 
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == UserManager.RC_SIGN_IN) {
-            IdpResponse response = IdpResponse.fromResultIntent(data);
 
-            // Successfully signed in
-            if (resultCode == RESULT_OK) {
-                Snackbar.make(this.mRecyclerView,"BENVENUTO",Snackbar.LENGTH_SHORT).show();
-            } else {
-                // Sign in failed
-                if (response == null) {
-                    // User pressed back button
-                    Snackbar.make(this.mRecyclerView,"ANNULLATO",Snackbar.LENGTH_SHORT).show();
-                    return;
-                }
-
-                if (response.getError().getErrorCode() == ErrorCodes.NO_NETWORK) {
-                    Snackbar.make(this.mRecyclerView,"NO INTERNET CONNECTION",Snackbar.LENGTH_SHORT).show();
-                    return;
-                }
-
-                Snackbar.make(this.mRecyclerView,"ERRORE SCONOSCIUTO",Snackbar.LENGTH_SHORT).show();
-                Log.e("ERRORE", "Sign-in error: ", response.getError());
-            }
-        }
-    }
 
 
     @Override
@@ -405,4 +450,6 @@ public class LomuxMapActivity extends FragmentActivity implements RecyclerAdapte
 
         Log.d("BACK", "BACK");
     }
-}
+
+
+}*/

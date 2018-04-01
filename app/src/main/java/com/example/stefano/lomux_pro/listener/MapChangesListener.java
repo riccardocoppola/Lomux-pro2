@@ -37,7 +37,7 @@ public class MapChangesListener implements GoogleMap.OnCameraIdleListener{
                 && actualMaxVisibleArea.contains(updateBounds.southwest)){
             // the actual visible area is smaller than before, so it not need to call the database
             Log.d("Camera","NO UPDATE");
-            context.clusterManagerOnCameraIdle();
+           // context.clusterManagerOnCameraIdle();
         }
         else if(PinsCallback.getInstance().getCall()==null||(!PinsCallback.getInstance().getCall().isExecuted()))
         {
@@ -45,12 +45,12 @@ public class MapChangesListener implements GoogleMap.OnCameraIdleListener{
             //and there aren't pendent call
             actualMaxVisibleArea = updateBounds;
             apply_bounds();
-            PinsCallback.getInstance().get_local_pins(mMap, actualMaxVisibleArea, context.getListIds(), context);
+            //PinsCallback.getInstance().get_local_pins(mMap, actualMaxVisibleArea, context.getListIds(), context);
             Log.d("Camera","UPDATE");
         }
         else{
             Log.d("Camera","NO UPDATE");
-            context.clusterManagerOnCameraIdle();
+           // context.clusterManagerOnCameraIdle();
         }
 
 

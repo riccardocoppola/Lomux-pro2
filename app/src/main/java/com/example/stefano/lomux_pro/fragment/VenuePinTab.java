@@ -1,9 +1,11 @@
 package com.example.stefano.lomux_pro.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import com.example.stefano.lomux_pro.R;
+import com.example.stefano.lomux_pro.activity.AddPinActivity;
 import com.example.stefano.lomux_pro.adapters.VenuePinAdapter;
 import com.example.stefano.lomux_pro.model.Venue;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -31,20 +34,22 @@ public class VenuePinTab extends Fragment {
 
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
     private ProgressBar bar;
+    private FloatingActionButton addPinButton;
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull  LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.venue_pin_tab, container, false);
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.venuePinList);
+        mRecyclerView =  view.findViewById(R.id.venuePinList);
+        addPinButton = view.findViewById(R.id.addPinVenue);
+        addPinButton.setOnClickListener(new AddPinListener());
         bar = view.findViewById(R.id.progressBar2);
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
         mRecyclerView.setHasFixedSize(true);
 
-        mLayoutManager = new GridLayoutManager(getContext(),4);
+        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getContext(), 4);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
 
@@ -81,6 +86,14 @@ public class VenuePinTab extends Fragment {
 
     }
 
+private class AddPinListener implements View.OnClickListener
+{
 
+    @Override
+    public void onClick(View v) {
+        Intent intent = new Intent(v.getContext(), AddPinActivity.class);
+        startActivity(intent);
+    }
+}
 
 }

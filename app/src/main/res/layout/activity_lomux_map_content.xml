@@ -1,43 +1,75 @@
-<com.sothree.slidinguppanel.SlidingUpPanelLayout
+<android.support.constraint.ConstraintLayout
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/sliding_layout"
-    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="bottom"
-    app:umanoPanelHeight="150dp"
-    app:umanoDragView="@+id/pin_fragment_layout_linear_layout_for_title"
-    app:umanoShadowHeight="20dp"
-    tools:layout_editor_absoluteY="9dp">
+    android:layout_width="match_parent"
+    android:background="@color/light_gray_inactive_icon"
+    >
 
-        <LinearLayout
+    <com.sothree.slidinguppanel.SlidingUpPanelLayout
+
+        android:id="@+id/sliding_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="bottom"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:umanoDragView="@+id/dragViewMap"
+
+        app:umanoFadeColor="@android:color/transparent"
+        app:umanoOverlay="true"
+        app:umanoPanelHeight="80dp"
+        app:umanoShadowHeight="20dp">
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/linearLayout2"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/recyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:scrollbars="none"/>
+            android:layout_height="match_parent">
 
             <fragment
                 android:id="@+id/map"
                 android:name="com.google.android.gms.maps.SupportMapFragment"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1.0"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
                 tools:context="com.example.stefano.lomux_pro.activity.LomuxMapActivity" />
 
-        </LinearLayout>
 
-
+        </android.support.constraint.ConstraintLayout>
 
 
         <include
-            layout="@layout/pin_info_slide3"
-            android:layout_width="match_parent"
-            android:layout_height="400dp" />
+            android:id="@+id/dragViewMap"
+            layout="@layout/pin_info_slide"
+            android:clickable="true"
+            android:focusable="false" />
 
-</com.sothree.slidinguppanel.SlidingUpPanelLayout>
+    </com.sothree.slidinguppanel.SlidingUpPanelLayout>
+
+    <com.arlib.floatingsearchview.FloatingSearchView
+        android:id="@+id/floating_search_view"
+        android:layout_width="0dp"
+        android:layout_height="63dp"
+
+        android:layout_marginBottom="420dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:floatingSearch_close_search_on_keyboard_dismiss="true"
+        app:floatingSearch_leftActionMode="showHamburger"
+        app:floatingSearch_searchHint="Cerca qui..."
+        app:floatingSearch_showSearchKey="true"
+        app:floatingSearch_suggestionsListAnimDuration="250"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+</android.support.constraint.ConstraintLayout>

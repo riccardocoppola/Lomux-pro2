@@ -45,7 +45,7 @@ public class ItineraryCallback {
 
                 if (response.isSuccessful()&&response.body()!=null) {
 
-                    context.addItinerary(response.body());
+                    //context.addItinerary(response.body());
                 }
                 else{
                     onFailure(call,new Throwable());

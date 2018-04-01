@@ -83,6 +83,14 @@ public class DrawnerItemClickListener implements  NavigationView.OnNavigationIte
             control_check(item);
 
         }
+        else if (id == R.id.nav_login) {
+            control_check(item);
+            press_login();
+
+        }else if (id == R.id.nav_logout) {
+            control_check(item);
+            press_logout();
+        }
         Log.d("CLICK", "test"+ id);
         DrawerLayout drawer = view.findViewById(R.id.drawer_layout);
         drawer.addDrawerListener(new Drawer_listener(item, drawer));
@@ -92,13 +100,20 @@ public class DrawnerItemClickListener implements  NavigationView.OnNavigationIte
         return true;
     }
 
+    private void press_logout() {
+        UserManager.logout(view);
+    }
+
+    private void press_login() {
+        UserManager.login(view);
+    }
+
     private void press_add() {
         if(UserManager.localUserIsSignIn()){
             Intent intent = new Intent(view.getApplicationContext(), PinsActivity.class);
             view.startActivity(intent);
         }else {
-            Log.d("LOGIN","NO");
-            UserManager.login(view);
+            UserManager.requireLogin(view);
         }
     }
 
