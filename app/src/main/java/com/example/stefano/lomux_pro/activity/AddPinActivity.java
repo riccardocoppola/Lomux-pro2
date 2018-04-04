@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.stefano.lomux_pro.Firebase;
 import com.example.stefano.lomux_pro.R;
 import com.example.stefano.lomux_pro.Utility;
 import com.example.stefano.lomux_pro.model.Event;
@@ -127,7 +128,7 @@ public class AddPinActivity extends AppCompatActivity implements SearchView.OnQu
           Venue v = new Venue(name,subtitle,info,address, new ArrayList<Event>(), new GeoPoint(lat,lon),null);
           dialog = ProgressDialog.show(this, "Aggiunta nuovo pin",
                   "Attendi", true);
-          Utility.Firebase.Firestore.addObjet(v,new DatabaseListener());
+          Firebase.Firestore.addObjet(v,new DatabaseListener());
       }
     }
 
@@ -162,7 +163,7 @@ public class AddPinActivity extends AppCompatActivity implements SearchView.OnQu
         }
     }
 
-    class  DatabaseListener implements Utility.Firebase.FirestoreListenerAddObject {
+    class  DatabaseListener implements Firebase.FirestoreListenerAddObject {
 
         @Override
         public void onFailure(@NonNull Exception e) {

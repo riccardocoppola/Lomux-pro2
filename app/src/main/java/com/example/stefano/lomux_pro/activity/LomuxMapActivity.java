@@ -1,7 +1,7 @@
 package com.example.stefano.lomux_pro.activity;
 
+import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -10,21 +10,19 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.ContextCompat;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.arlib.floatingsearchview.FloatingSearchView;
+import com.arlib.floatingsearchview.util.view.SearchInputView;
+import com.example.stefano.lomux_pro.Firebase;
 import com.example.stefano.lomux_pro.PinRenderer;
 import com.example.stefano.lomux_pro.R;
 import com.example.stefano.lomux_pro.UserManager;
@@ -32,8 +30,8 @@ import com.example.stefano.lomux_pro.Utility;
 import com.example.stefano.lomux_pro.listener.DrawnerItemClickListener;
 import com.example.stefano.lomux_pro.listener.MapChangesListener;
 import com.example.stefano.lomux_pro.model.Pin;
+import com.example.stefano.lomux_pro.model.User;
 import com.example.stefano.lomux_pro.model.Venue;
-import com.example.stefano.lomux_pro.model.VenuePin;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.android.gms.maps.CameraUpdate;
@@ -45,17 +43,13 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.maps.android.clustering.ClusterManager;
-import com.readystatesoftware.systembartint.SystemBarTintManager;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,8 +59,9 @@ public class LomuxMapActivity extends FragmentActivity implements OnMapReadyCall
     public final static LatLng turin_center = new LatLng(45.05, 7.666667);
     private ClusterManager<Pin> mClusterManager;
     private List<String> ids;
-    SlidingUpPanelLayout slidingUpPanelLayout;
-    PinRenderer pinRenderer;
+    private SlidingUpPanelLayout slidingUpPanelLayout;
+    private PinRenderer pinRenderer;
+    private DrawerLayout drawerView;
 
 
     //itinerary recycler view
@@ -77,7 +72,8 @@ public class LomuxMapActivity extends FragmentActivity implements OnMapReadyCall
     private CoordinatorLayout dragView;
     private FloatingSearchView searchView;
     private SupportMapFragment mapFragment;
-
+    private SearchInputView searchInput;
+    private LoginActions loginActions;
 
 
 
@@ -86,13 +82,17 @@ public class LomuxMapActivity extends FragmentActivity implements OnMapReadyCall
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lomux_map);
 
+        loginActions = new LoginActions(this);
         navigationView= findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(new DrawnerItemClickListener(this));
+        navigationView.setNavigationItemSelectedListener(new DrawnerItemClickListener(this, loginActions));
         slidingUpPanelLayout = findViewById(R.id.sliding_layout);
-
         dragView = findViewById(R.id.dragViewMap);
         searchView = findViewById(R.id.floating_search_view);
-        searchView.attachNavigationDrawerToMenuButton((DrawerLayout) findViewById(R.id.drawer_layout));
+        drawerView =  findViewById(R.id.drawer_layout);
+        searchInput = searchView.findViewById(com.arlib.floatingsearchview.R.id.search_bar_text);
+
+        searchInput.setOnFocusChangeListener(new SearchViewFocusListener(searchInput.getOnFocusChangeListener()));
+        searchView.attachNavigationDrawerToMenuButton(drawerView);
         slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
         localUser = UserManager.getLocalUser();
         setUserInfoOnDrawnerMenu();
@@ -100,7 +100,7 @@ public class LomuxMapActivity extends FragmentActivity implements OnMapReadyCall
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
          mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+         mapFragment.getMapAsync(this);
 
     }
 
@@ -115,7 +115,7 @@ public class LomuxMapActivity extends FragmentActivity implements OnMapReadyCall
         mMap.moveCamera(CameraUpdateFactory.newLatLng(turin_center));
         mClusterManager = new ClusterManager<>(this, mMap);
         mClusterManager.setAnimation(true);
-        Utility.Firebase.Firestore.readCollection(Venue.class ,new Utility.Firebase.FirestoreListenerGetObject(){
+        Firebase.Firestore.readCollection(Venue.class ,new Firebase.FirestoreListenerGetObject(){
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     if (task.isSuccessful()) {
@@ -151,7 +151,7 @@ public class LomuxMapActivity extends FragmentActivity implements OnMapReadyCall
                     for(Marker m:mClusterManager.getClusterMarkerCollection().getMarkers())
                     Log.d("CLUSTER", m.getId()+" "+m.getPosition().toString());
                 }
-                else{
+                else if(mapFragment.getView().getVisibility() == View.INVISIBLE){
                     slidingUpPanelLayout.setShadowHeight(shadow);
                     mapFragment.getView().setVisibility(View.VISIBLE);
                 }
@@ -197,37 +197,13 @@ public class LomuxMapActivity extends FragmentActivity implements OnMapReadyCall
         mMap.setOnCameraIdleListener(mapChangesListener);
     }
 
-
-
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == UserManager.RC_SIGN_IN) {
-            IdpResponse response = IdpResponse.fromResultIntent(data);
-
-            // Successfully signed in
-            if (resultCode == RESULT_OK) {
-                Snackbar.make(navigationView,"Accesso effettutato",Snackbar.LENGTH_SHORT).show();
-                localUser = FirebaseAuth.getInstance().getCurrentUser();
-                setUserInfoOnDrawnerMenu();
-            } else {
-                // Sign in failed
-                if (response == null) {
-                    // User pressed back button
-                    Snackbar.make(navigationView,"Accesso annullato",Snackbar.LENGTH_SHORT).show();
-                    return;
-                }
-
-                if (response.getError().getErrorCode() == ErrorCodes.NO_NETWORK) {
-                    Snackbar.make(navigationView,"Nessuna connessione internet",Snackbar.LENGTH_SHORT).show();
-                    return;
-                }
-
-                Snackbar.make(navigationView,"Errore sconosciuto",Snackbar.LENGTH_SHORT).show();
-                Log.e("ERRORE", "Sign-in error: ", response.getError());
-            }
-        }
+        super.onActivityResult(requestCode, resultCode, data);
+        loginActions.loginResultOnActivityResult(requestCode, resultCode, data);
     }
+
+
 
     private void setUserInfoOnDrawnerMenu() {
         if(localUser!=null){
@@ -255,7 +231,7 @@ public class LomuxMapActivity extends FragmentActivity implements OnMapReadyCall
         }
     }
 
-
+/*
     public void logoutComplete() {
         View headerView = navigationView.getHeaderView(0);
         TextView userName = headerView .findViewById(R.id.userNameDraw);
@@ -268,10 +244,83 @@ public class LomuxMapActivity extends FragmentActivity implements OnMapReadyCall
         logout.setVisible(false);
         localUser = FirebaseAuth.getInstance().getCurrentUser();
         Snackbar.make(navigationView,"Logout effettutato",Snackbar.LENGTH_SHORT).show();
+    }*/
+
+    @Override
+    public void onBackPressed() {
+        if (drawerView.isDrawerOpen(GravityCompat.START))
+            drawerView.closeDrawer(GravityCompat.START);
+        else if (slidingUpPanelLayout.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED)
+            slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.ANCHORED);
+        else if (slidingUpPanelLayout.getPanelState() == SlidingUpPanelLayout.PanelState.ANCHORED)
+            slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+        else
+            super.onBackPressed();
     }
 
+    class SearchViewFocusListener implements View.OnFocusChangeListener{
+        View.OnFocusChangeListener listener;
 
+        SearchViewFocusListener(View.OnFocusChangeListener listener){
+            this.listener = listener;
+        }
+
+        @Override
+        public void onFocusChange(View v, boolean hasFocus) {
+            listener.onFocusChange(v,hasFocus);
+            if(hasFocus){}
+            //TODO far uscire un pannello di ricerca
+        }
+    }
+
+    class LoginActions extends UserManager.LoginActions {
+
+        LoginActions(Activity activity){
+            super(activity);
+        }
+        @Override
+        public void onLoginResult(int resultCode, Intent data) {
+            IdpResponse response = IdpResponse.fromResultIntent(data);
+
+            // Successfully signed in
+            if (resultCode == RESULT_OK) {
+                Snackbar.make(navigationView,"Accesso effettutato",Snackbar.LENGTH_SHORT).show();
+                localUser = UserManager.getLocalUser();
+                setUserInfoOnDrawnerMenu();
+            } else {
+                // Sign in failed
+                if (response == null) {
+                    // User pressed back button
+                    Snackbar.make(navigationView,"Accesso annullato",Snackbar.LENGTH_SHORT).show();
+                    return;
+                }
+                if (response.getError()!=null && response.getError().getErrorCode() == ErrorCodes.NO_NETWORK) {
+                    Snackbar.make(navigationView,"Nessuna connessione internet",Snackbar.LENGTH_SHORT).show();
+                    return;
+                }
+                Snackbar.make(navigationView,"Errore sconosciuto",Snackbar.LENGTH_SHORT).show();
+                Log.e("ERRORE", "Sign-in error: ", response.getError());
+            }
+        }
+
+        @Override
+        public void onLogout() {
+            View headerView = navigationView.getHeaderView(0);
+            TextView userName = headerView .findViewById(R.id.userNameDraw);
+            userName.setVisibility(View.GONE);
+            ImageView image = headerView.findViewById(R.id.logoDraw);
+            image.setImageResource(R.drawable.it0circle);
+            MenuItem login = navigationView.getMenu().findItem(R.id.nav_login);
+            login.setVisible(true);
+            MenuItem logout= navigationView.getMenu().findItem(R.id.nav_logout);
+            logout.setVisible(false);
+            localUser = UserManager.getLocalUser();
+            Snackbar.make(navigationView,"Logout effettutato",Snackbar.LENGTH_SHORT).show();
+        }
+    }
 }
+
+
  /*   @Override
     public void onItemClick(Itinerary itinerary) {
 

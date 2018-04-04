@@ -24,12 +24,13 @@ import com.example.stefano.lomux_pro.activity.PinsActivity;
 
 public class DrawnerItemClickListener implements  NavigationView.OnNavigationItemSelectedListener {
     private LomuxMapActivity view;
-    private static final int RC_SIGN_IN = 123;
+    private UserManager.LoginActions loginActions;
 
     private SearchView searchView;
 
-    public DrawnerItemClickListener(LomuxMapActivity view) {
+    public DrawnerItemClickListener(LomuxMapActivity view, UserManager.LoginActions loginActions) {
         this.view = view;
+        this.loginActions = loginActions;
         //this.searchView = view.findViewById(R.id.searchbar);
     }
 
@@ -101,11 +102,11 @@ public class DrawnerItemClickListener implements  NavigationView.OnNavigationIte
     }
 
     private void press_logout() {
-        UserManager.logout(view);
+        UserManager.logout(loginActions);
     }
 
     private void press_login() {
-        UserManager.login(view);
+        UserManager.login(loginActions);
     }
 
     private void press_add() {
@@ -113,7 +114,7 @@ public class DrawnerItemClickListener implements  NavigationView.OnNavigationIte
             Intent intent = new Intent(view.getApplicationContext(), PinsActivity.class);
             view.startActivity(intent);
         }else {
-            UserManager.requireLogin(view);
+            UserManager.requireLogin(loginActions);
         }
     }
 
@@ -144,17 +145,17 @@ public class DrawnerItemClickListener implements  NavigationView.OnNavigationIte
         }
 
         @Override
-        public void onDrawerSlide(View drawerView, float slideOffset) {
+        public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
 
         }
 
         @Override
-        public void onDrawerOpened(View drawerView) {
+        public void onDrawerOpened(@NonNull  View drawerView) {
 
         }
 
         @Override
-        public void onDrawerClosed(View drawerView) {
+        public void onDrawerClosed(@NonNull View drawerView) {
             item.setChecked(false);
             item.setCheckable(true);
         }

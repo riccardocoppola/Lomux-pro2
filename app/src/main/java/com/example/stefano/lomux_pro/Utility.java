@@ -130,32 +130,4 @@ public class Utility {
         }
     }
 
-
-    public static class Firebase{
-
-        public static class Firestore {
-
-            public static boolean addObjet(Object value, FirestoreListenerAddObject listener) {
-                if (isInternetAvailable()) {
-                    FirebaseFirestore.getInstance().collection(value.getClass().getSimpleName())
-                            .add(value)
-                            .addOnSuccessListener(listener)
-                            .addOnFailureListener(listener);
-                    return true;
-                }
-                else{
-                    listener.onFailure(new InternetException("Nessuna connessione internet"));
-                } return false;
-            }
-
-            public static void readCollection(Class objectClass, Firebase.FirestoreListenerGetObject listener){
-                FirebaseFirestore.getInstance().collection(objectClass.getSimpleName())
-                        .get()
-                        .addOnCompleteListener(listener);
-            }
-
-        }
-    public interface FirestoreListenerAddObject extends OnSuccessListener<DocumentReference>,OnFailureListener{}
-    public interface FirestoreListenerGetObject extends OnCompleteListener<QuerySnapshot>{}
-}
 }

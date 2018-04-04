@@ -2,21 +2,16 @@ package com.example.stefano.lomux_pro;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Message;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.Toast;
+import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 
-import com.example.stefano.lomux_pro.activity.LomuxMapActivity;
+import com.facebook.login.Login;
 import com.firebase.ui.auth.AuthUI;
-import com.firebase.ui.auth.ErrorCodes;
-import com.firebase.ui.auth.IdpResponse;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -26,49 +21,44 @@ import java.util.Arrays;
 
 public class UserManager {
 
-    public static final int RC_SIGN_IN = 123;
-
     public static FirebaseUser getLocalUser(){
         return FirebaseAuth.getInstance().getCurrentUser();
     }
 
-    public static void login(Activity context){
+    public static void login(LoginActions loginActions){
         // not signed in
-        context.startActivityForResult(
+        loginActions.activity.startActivityForResult(
                 AuthUI.getInstance()
                         .createSignInIntentBuilder()
+                        .setLogo(R.drawable.logo)
                         .setTheme(R.style.MyMaterialTheme)
-                        .setIsSmartLockEnabled(!BuildConfig.DEBUG /* credentials */, true /* hints */)
+                        .setIsSmartLockEnabled(!BuildConfig.DEBUG , true )
                         .setAvailableProviders(Arrays.asList(
                                 new AuthUI.IdpConfig.EmailBuilder().build(),
                                 new AuthUI.IdpConfig.GoogleBuilder().build(),
                                 new AuthUI.IdpConfig.FacebookBuilder().build(),
                                 new AuthUI.IdpConfig.TwitterBuilder().build()))
                         .build(),
-                RC_SIGN_IN);
-
+                loginActions.RC_SIGN_IN);
     }
 
-    public static void logout(final LomuxMapActivity activity){
-        AuthUI.getInstance().signOut(activity).addOnCompleteListener(new OnCompleteListener<Void>() {
+    public static void logout(final LoginActions loginActions){
+       AuthUI.getInstance().signOut(loginActions.activity).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                activity.logoutComplete();
+               loginActions.onLogout();
             }
         });
     }
     public static boolean localUserIsSignIn() {
-        if(FirebaseAuth.getInstance().getCurrentUser()!=null)
-            return true;
-        else
-            return false;
+        return FirebaseAuth.getInstance().getCurrentUser() != null;
     }
 
-    public static void requireLogin(final Activity activity){
+    public static void requireLogin(final LoginActions loginResult){
 
 
         AlertDialog alertDialog = new AlertDialog.Builder(
-                activity).create();
+                loginResult.activity).create();
 
         // Setting Dialog Title
         alertDialog.setTitle("Accesso richiesto");
@@ -82,15 +72,13 @@ public class UserManager {
         // Setting OK Button
         alertDialog.setButton(DialogInterface.BUTTON_POSITIVE,"OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                // Write your code here to execute after dialog closed
-                login(activity);
+                login(loginResult);
             }
         });
         alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE,"Annulla",new DialogInterface.OnClickListener(){
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                return;
             }
         });
 
@@ -98,6 +86,32 @@ public class UserManager {
         alertDialog.show();
 
 
+    }
+
+    public static abstract class LoginActions{
+        private Activity activity;
+        private int RC_SIGN_IN;
+
+        public int getRC_SIGN_IN() {
+            return RC_SIGN_IN;
+        }
+
+        public void setRC_SIGN_IN(int RC_SIGN_IN) {
+            this.RC_SIGN_IN = RC_SIGN_IN;
+        }
+
+
+        public LoginActions(Activity activity){
+            this.activity = activity;
+        }
+        public void loginResultOnActivityResult(int requestCode, int resultCode, Intent data){
+            if(requestCode == RC_SIGN_IN) {
+                onLoginResult(resultCode, data);
+            }
+        }
+
+        public abstract void onLoginResult(int resultCode, Intent data);
+        public abstract void onLogout();
     }
 }
 
